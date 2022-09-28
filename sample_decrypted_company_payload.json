@@ -1,0 +1,214 @@
+{
+    "appname"=>"employee-listing",
+    "app_version"=>"live",
+    "searches"=>[
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1664272841421x857085911884103700", 
+            "constraint_type"=>"equals"
+            }], 
+        "sorts_list"=>[], 
+        "from"=>0, 
+        "n"=>1, 
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+        }, 
+    {
+        "appname"=>"employee-listing", 
+        "app_version"=>"live", 
+        "type"=>"custom.company", 
+        "constraints"=>[{
+            "key"=>"account_custom_account", 
+            "value"=>"1348695171700984260__LOOKUP__1664272841421x857085911884103700", 
+            "constraint_type"=>"equals"
+            }], 
+        "sorts_list"=>[], 
+        "from"=>1, 
+        "n"=>9, 
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+        }
+    ]
+}
+
+{
+    "appname"=>"employee-listing",
+    "app_version"=>"live",
+    "searches"=>
+    [
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live", 
+        "type"=>"custom.company",
+        "constraints"=>[
+            {"key"=>"account_custom_account", 
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"}],
+        "sorts_list"=>[],
+        "from"=>1,
+        "n"=>1,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    },
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"}],
+        "sorts_list"=>[],
+        "from"=>0,
+        "n"=>1,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    },
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"}],
+        "sorts_list"=>[],
+        "from"=>2,
+        "n"=>8,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    }
+    ]
+}
+
+{
+    "appname"=>"employee-listing",
+    "app_version"=>"live",
+    "searches"=>[
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"
+        }],
+        "sorts_list"=>[],
+        "from"=>2,
+        "n"=>1,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+        },
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"
+            }],
+        "sorts_list"=>[],
+        "from"=>0,
+        "n"=>2,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+        },
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"
+            }],
+        "sorts_list"=>[],
+        "from"=>3,
+        "n"=>7,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+        }
+    ]
+}
+
+{
+    "appname"=>"employee-listing",
+    "app_version"=>"live",
+    "searches"=>[
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"
+        }],
+        "sorts_list"=>[],
+        "from"=>3,
+        "n"=>1,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    },
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"
+            }],
+        "sorts_list"=>[],
+        "from"=>0,
+        "n"=>3,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    },
+    {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"
+            }],
+        "sorts_list"=>[],
+        "from"=>4,
+        "n"=>6,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    }
+    ]
+} 
+
+
+
+"from"=>0, 
+"n"=>1, 
+"from"=>1,
+"n"=>1,
+"from"=>2,
+"n"=>1,
+"from"=>3,
+"n"=>1,
+
+"from"=>0,
+"n"=>1,
+"from"=>0,
+"n"=>2,
+"from"=>0,
+"n"=>3,
+
+"from"=>1, 
+"n"=>9, 
+"from"=>2,
+"n"=>8,
+"from"=>3,
+"n"=>7,
+"from"=>4,
+"n"=>6,
+from for 1 company - 0,0
+from for 2 companies = 1,0,2
+from for 3 companies = 2,0,3
+from for 4 companies = 3,0,4
+n for 1 company = 1,9
+n for 2 companies = 1,1,8
+n for 3 companies = 1,2,7
+n for 4 companies = 1,3,6

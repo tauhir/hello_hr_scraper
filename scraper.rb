@@ -37,7 +37,14 @@ extra_headers = {
 }
 context = "employee-listing"
 
-def main(filename)
+if ARGV[0] != nil
+  scrape_data(ARGV[0])
+else 
+  puts "try again with file argument"
+end
+
+
+def scrape_data(filename)
   # import file
   cookies = File.readlines("/home/tauhir/hello_hr/hellohr.co.za_cookies.txt",chomp: true).map {|line| line.split("\t")}
   cookies = cookies.slice(4,cookies.size-4) #ignore first 4 lines
@@ -53,7 +60,7 @@ def main(filename)
   user_id = response_data["data"]["Created By"] #concern is that this could be a different user but we hope not or we hope they don't care
   
   # now we need to check how many companies there are with an maggregate search
-  company_count = get_aggregate_companies(account_id, user_id)
+  company_count =get_aggregate_companies(account_id, user_id)
 
   # now build the payload and get the company information
   main_conn = create_main_conn
@@ -212,12 +219,3 @@ def encrypt_payload(context, data)
     z: encrypt["#{context}#{n}", o, context, data.to_json],
   }
 end
-
-
-
-
-
-
-
-  
-privat

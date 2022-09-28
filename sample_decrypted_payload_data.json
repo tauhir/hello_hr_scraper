@@ -1,0 +1,68 @@
+[
+    {
+        "name": "get company data",
+        "payload":{"z":"NrLzrgoG0cCJcoISB0/uQKGXfgl125Fox7l24irD4ubSGPvt+zQhFX5abyXyWQ6ThQCIzRNZKrHZI95cPlgqyl7rzy0M2BRvPNiPoNmoDxITqE04sx9f/sbKHKaRYvAHZTq2o7bSlPWYmJOdZbuHB05ZiEPYzaOC0sxilTRyjva0Ps7dl+Saj8LscJ5N8Bqn2O8X8g1nq6K01Do4rpxHeOfolwsVaMfClXnxKFXPsE9pEoOCNWsshxFMZKDDsa2o2Bh82+S8udRKeEY+eWtuI0b/y8VGKpubau7612DVd3gMKcTmwR59ulXn5gHxItQBUWClg3zQF7uQLvcDucsgTf4w92pfisUaIwHKnqdy5WvGUgiYsCitO2fpnziD0pX9jC7RiniVmlg6JQk/h6+/6NlVYld30U85Fi1X9fyDJXv8I97ODXwQNI/10uJfQhU70jgH3uq4AVhVXu4ZHaFEZ3WGtcBQ0c++W5rEVvycmBCKJDvVlClkqhB7JMNJNZCr3zQ6Nk049J04AedqlLOw6xscR576m/EDCAJZEgjeaY7ennVkESS3rEeEjqoAju4vLzIfs0MEQWpJCSvj3gpwMbRCL+BFfcogXv6doTXv+zZcxJNZR30LeHSzkRpmgwLZvbyHVGVc28Sh6jhYBMkmKqc8OJRheF9s57QEKVoutwjbiFyS+GDLLd67X8F7hP0+G6t0mh3a1jpW2Vf1Vw5663cH6wOBjDmclk+pbG/qNS17xhqX7Xevr+NcBYRD3ojfkVNR9/H23+ZKCNU4HDg38s586JIFJ9AmoM4rmSX/SNVNLoucjboV2EY8CWA/luFD2exg3EtoOtIvaitgQtNAbgM3A4/BeaHRMVVO4HXUG9VAL9DCB5hWW2wf8tHLQ7IgluV4YH3QVIE0FBhVrWFNVjGIVOKlqnJBvthfmvwmf5vTNxTIHiiBBBaYGv82J6j9jC9wXl+89tEfWTgtclVQ6I2K+qefcQOwO7z948uujbH19FxkBmOOxGyQiO19IMvtHozbuIXk55UJPJNuyEROQRIGFqyQBabAo+gKlv3vvoL3y60pdl+zCbOjjQiJyEJtzi2YTmaSraHH5yFL/Ks0kJkgBYKohqq6QH/Z4BTAisplSl1DqGeO6qd7R+1bJMVUyJDXfGlPuM4P6tBQhCPi2ux7ur/TPXj4oNq/smOGvmjl18MLJxjTJZq7HpHgMGj/ma6BOBETZ3MU3zKkDzg0Qt7Pj9U+oxvYK4OJVQTbqM5R+XqzyAkOFxz8FCY+jbGqbtRh/PaMVuLb3/Bvgt9zO6zAYfMK5sesr3tsntH/Ih7hOnGZibxX9sIWwDF6xnxbA7ADgDFHY7XK4rM6/fJQBp5IgwHbycoxsh7mgnPHFldOe+PmFBnL0i+IHXVWMSD9O4rOtYlmK6r3iAtl43sVmJASI1oxVwLzYUM7FR+exMPiG1PZ7mvkXWXSX5tdHJmgp9KNQov9F3tndrcmdRpucchstdo+hOC55gRajt5DQsCI0SlyiXZoY+s4m/tm0n6rXUstnCNj7mnUotsYopSpAfgLCgWFh+IrLgc/2H9G8jDxbxmvqKgqaa/4lD5IdjXTbA3Kky9zH5S1wM/4MZVPnle0mxxdh+gu8vsghg3nLEp/T+WBc+LzGeJuuwbqCy1vaLSk6YNwS8NCLDs4tehvEDUtdousEGTZpCGCg3B08yCZ8pvOecMVMpx0m9rvUPra2X90hVLE5WqLt6ASpQRrDhg0T7K50AYuywfxjkGbqbCPtdVQvQ2n4s3Ytyxfb+ibd7xAf/3BY9Bd8AmXVnvx0wD2qGWqt9zBEk2qWijQ9NH4fDfngVIr2bgbCCD1KQWVW7zXwf45iCy7D4sABeRF2DkT8+PKenFHdE0/P4NvwWJcj7pbonACPRx556ni/g235xtDp9tyEj/92JdtVvvVfbsWr041ahtCxcJfXtC9Ve2DnkjdtuKKe3WlYDJni0o6G1LdVq0q6iesLErmtXQDkMFy4odk30MDG2rv6tXImyffgTjySlFLDgU9rEOfNsoYfICluCte40642cZM+LrFu8NSmHKuHsawWJR43U8zF2gm5Zut6+++tqmsB2BpFD2jwhecYM7OxL/mNhOStmbHUx+z5G1Y7NNkWwuJD0zGL9AjoFXDV1cmrEs0P2cnTfnEHR8JprcQR5rTzz+1FFRtuAAJ/TR05Lb/FaJ63Xd5Dt2SnL0KUzzhWehIrpBBmtIzJbKODK1vSs8JOTQM9Ro5JnQ6mkLQo8yzJ2jG5knbRuw9ig34SqxephlrIWq04jlB6AJopBXTqA1glYaboUMLzpL85DOkFbe+0ndcDDmP2cEbyGuDqJABpc0K+hF/dCNotD3pgqeXDihKGYuMec9zYFt62hLBQ5sphYEG7XPPrRjH15bd55PAGon3rZ4eK2VavCJuf3FTkuIx9ork9/olcsVLL/a8pIQBLZIRBye9RYE=","y":"3WfZ3oeYNdShd20NkYaZHg==","x":"nCJAMUdXhh9kXh86vzkxDmcU2/VmX+27aaIicAhDq94="},
+        "decrypted_payload":
+            {
+                "appname"=>"employee-listing",
+                "app_version"=>"live",
+                "searches"=>
+                [
+                {
+                    "appname"=>"employee-listing",
+                    "app_version"=>"live", 
+                    "type"=>"custom.company",
+                    "constraints"=>[
+                        {"key"=>"account_custom_account", 
+                        "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+                        "constraint_type"=>"equals"}],
+                    "sorts_list"=>[],
+                    "from"=>1,
+                    "n"=>1,
+                    "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+                },
+                {
+                    "appname"=>"employee-listing",
+                    "app_version"=>"live",
+                    "type"=>"custom.company",
+                    "constraints"=>[{
+                        "key"=>"account_custom_account",
+                        "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+                        "constraint_type"=>"equals"}],
+                    "sorts_list"=>[],
+                    "from"=>0,
+                    "n"=>1,
+                    "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+                },
+                {
+                    "appname"=>"employee-listing",
+                    "app_version"=>"live",
+                    "type"=>"custom.company",
+                    "constraints"=>[{
+                        "key"=>"account_custom_account",
+                        "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+                        "constraint_type"=>"equals"}],
+                    "sorts_list"=>[],
+                    "from"=>2,
+                    "n"=>8,
+                    "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+                }
+                ]
+            }
+    },
+    {
+        "name": "get employee data in Company A",
+        "payload":{"z":"4J4qCl+C0Xy4RrBia/O2APozZBhgnjXx9HfBRlXng7SzHjpnptveU6z6mLoifUnDqgXIhJRUOhVxB+2Kekv695AwourI3LaDyKoENsNGBJsh4BjZLFYwEiHlwFcpvityQkMtqoTLXQyyB16DwmEuak+WLkOryXfPC9wS91sGWTkgk1Qx1vbAzVwLn3icVTg5Na+gYkuBKsMzHeFCDUxCuOv8FWI6PXG01osceBWURW4Sxd3Xv3nMZ5/R6t8RI9a4/xyDKDPG17Yl3dzxDn5ewhBk5gSq5OOr3J3+dFZgDHjv2eZ4UtLr4vW0cvE/VEiFkWemfkSh8T0g8NWDSJzhWlbegpj9h659iozzYNqmfI9SVfJoLaTSaGFgaGyH7V3UQaddMajfQdYAjZMaOljkCuEheUL532+RarqNtEgTgSnakGT1eh1VJsFCjepm2CEDbXzXH6Qwm+ac+a5pYPDJdWVxCIyCDumWtJPC0LZW8aESJbkTk7MfwIvRUNcvaa+QFR1bIFq9iaJypDesG2mi6hdxUG2qUnAbCfGp4qCIZOo+N22DXlekDtCGBLubeM44wb/xljIVBsyXeScJWS9veLG1O7WaTZ9pSCWNmNTb7PPKB0LKe7Mbf4Uj95DwyL+2GP0DpVtxD3dx8KopxDYDTOg3TztbxMTZLJ9O7bYaZ+7HdBQIItJLIgKES0T7e9xolZ9eRqEf4Qil4geUwR360lsDP+cgxJ5ZlPj89WRKY2d1qsgzJdgK705NCTtDrSifym8lkd7nJxCoS3U6/jM2nqcmZW3uYl7Sld8M9dEmf4iiZKMr8oW49rrwlT8McsC03VL3/4J1HdNoExoWdUx4a6VakVmeL1x1/O4OrT+SPn/jmzNOaYeEJAsv3Zojxw2jVb/WMrwVjWXa2LKrjh3s393V4PHAIpB0qRXK6K3Gn6x2pKX9DTGJGgDc22Ux2sQht9u6Ctp/oV/sRQfr32OZe2nUqDvCnmO1bw4gVAk8PS0K/Q6gfTNuoU5PuSkgZc82irG8/RfkATkXsGRHZi+mDiau42Py+2mEAkaNx3nSCvA3IsisTV2unLEOYO+VFmj7N2c1q08fuOXbYGQV0HEfyKsJwG+X4H31/rFDxy7/dWMwNsz6l+l7gLYo6iNdFVGzCVfrjnQ70sL8q4/mN7dSYZ1oVUGXlpnOMvEHgrtQSi/glHfwcoUx9qiCnWh7FLHbY6OusOG3C9PYoAFyTrQ2ZbuK52uB6Iu6vcQCcEyayAsPJiYtZJBZTSLOvxBdB7LyuL1AMANLJPAYrR5XxVkmurOltJFDJ3BShRclDisMkeXFSRZZHDHZs7/FVYzPYNrhyhXjWuu+vr9vS1xe5pXYFTbLLJS91Zkr+6QYtddKjFqglwcJr2COYKCJGaDQNQNt7F7KrIIsT+njGo0bKe0CIggN/vbwStepzmE5VwdLXNvjZ4jMMossXcGmH2AAcNCXQ4bEabtxSpVwJXWKa767zQ==","y":"RTSBi3q4St9s4ydiDBQeCw==","x":"a0k5tgYioJ18GNIMyUbN87EHydfZCig/BG70eAPmoho="},
+        "decrypted_payload":{"appname"=>"employee-listing", "app_version"=>"live", "searches"=>[{"appname"=>"employee-listing", "app_version"=>"live", "type"=>"user", "constraints"=>[{"key"=>"_id", "constraint_type"=>"not equal", "value"=>"admin_user"}, {"key"=>"_id", "constraint_type"=>"not equal", "value"=>"admin_user_employee-listing_live"}, {"key"=>"_id", "constraint_type"=>"not equal", "value"=>"admin_user_employee-listing_live"}, {"key"=>"_id", "constraint_type"=>"not equal", "value"=>"admin_user_employee-listing_test"}, {"key"=>"company1_custom_company", "value"=>"1348695171700984260__LOOKUP__1663328287094x260654907396456450", "constraint_type"=>"equals"}, {"key"=>"user_signed_up", "constraint_type"=>"equals", "value"=>true}], "sorts_list"=>[{"sort_field"=>"last_name_text", "descending"=>false}], "from"=>0, "n"=>2, "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"}]}
+    },
+    {
+        "name": "get employee data in Company B",
+        "payload":{"z":"KCNa1kTftPY7P7OVSy4Q41AbodxcmQ2WDeWf6Nnav6UJjlZQd4BbFrhHgDBnKUxeMJeKnHwSj26vcUIT7DKeqdfZUo4eeB0ktgC5UGpfNZOSA0tN6hoDHepbsQ55ii4rK2ADj/zyMUJqWHPRGy5ysYwS3ZmD6H7ZKK6XjcvXBDzDADsuoNJSTOqX18fKeWuuI/IChnGLHIhp0m7WsDfpNReBKbTMwms79Nl9Tep+C+cTS1Ta4V1kbbHpO5XOU/pq3MLWO5+MfxbqqL29v4SwViw4hu5Vi9rE3/VdKt4G8u3DE7WNTJhXMF9YZhAlHTvJN2Ecyq+XboOhMO8HzpeQi5pQwWYj1Xq/q8tWibS2fx/FQPpd8afO73xjiw0GisnU3fDv7zYTJIWH/QMBE/IuHQz9/ST5G1N1vRKWQUVkr7qKk7Ju89Zx7W9jHSA0T1YUyahuTpV6QGUcizB6JZpqaC87E4ieNRdabsameLpb23HknhFyuA7SLYb+96KMxzzZbQfU0pRpQdfeIhr8RSseHWhk91RCmPmK6ICQz+q6q8uonHSWv2ZagyB/cK3PLIcYt2+t86YvooB6NoKJKS0urFHey5gvCDqjAsj4M4peLeI0Bca3eJ0e/j1Q2RajJ++XLFR/sbr3oVbJnia+8kIupQ2RxI0QiS6+bUU/r1pzQKSeRPpqk19DBBYAR3RJkDHrfZvcTYoJV6doAak32teyuyZLDzX2pkaFh9FfFaj1T2DOJ9/SZXF2B4OpKapsUwsu7MLItLdqn2zA9sAVbDQzIna/ueQVDO5Fbl5suTpVZf07qLwwprQf6pIucgO7WoYYJPSB9WW1lk66J1Wcv9n9l6NcEi8XZY2vnCLDxD+k96z2+ooynX2WW890FsXgBIZuyZ2sw/HUf8ut0jLeMZSwIVbU/fO7GBmAgkc1lik3g6lWkVaBNrLdiQUXcr9iLSIll6PioeSrjptnfK2FLtAulBWJMBN5H43UFokkSHms6Tr2+Up2dU0AHcFIIfA8vHQDu+3LaMDsNnCyisiuh2l3NzrhRJGumMe2A9oLXtz3bcU54oASFov7L8qY07GpUonRvl541Fp/TG3EOhXYKGNh4KanSnB7IGX65MmLp6HZpr+hrcAnUcmOD7QPHI/as8BGEbBCAJGTZ60gUuzfjiYCTrNGP1Hne0M2WIMer3WSi/prhfEPUHgJhsPUHNe0tPQw0dHOnSdWWf9jWjX5WMVXa8Fn02BqK/KMS+iaROqXu73Xn9nZ2py6Z/6WjXJY2YbWRekJRqj6np130d8jS+q7dwTCziCCcvWr6ZlV4FwRnPg9Ek/eiW2vGOxIKBItaKR49K5oXpg8jwplRd2EFZH9YgfxB+UwxjI8rycNRMPiZQu/WHzG1oCzm8GbtOp0Bb5uUSGj/6yDur65uUCFR+7sWWkAEgbEYf5BECOxlasEU42pr34iew3J7aCPEBvl7HdNolNwI6XRDWsfcrBOw9Z06g==","y":"bWcyLFa73N+0tkd1jPg5sA==","x":"stMsWuqiuVLylZA4DBIiYJe5QaF76a6+CDPgB/j3Eu0="},
+        "decrypted_payload": {"appname"=>"employee-listing", "app_version"=>"live", "searches"=>[{"appname"=>"employee-listing", "app_version"=>"live", "type"=>"user", "constraints"=>[{"key"=>"_id", "constraint_type"=>"not equal", "value"=>"admin_user"}, {"key"=>"_id", "constraint_type"=>"not equal", "value"=>"admin_user_employee-listing_live"}, {"key"=>"_id", "constraint_type"=>"not equal", "value"=>"admin_user_employee-listing_live"}, {"key"=>"_id", "constraint_type"=>"not equal", "value"=>"admin_user_employee-listing_test"}, {"key"=>"company1_custom_company", "value"=>"1348695171700984260__LOOKUP__1663329640319x300816591957919550", "constraint_type"=>"equals"}, {"key"=>"user_signed_up", "constraint_type"=>"equals", "value"=>true}], "sorts_list"=>[{"sort_field"=>"last_name_text", "descending"=>false}], "from"=>0, "n"=>10, "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"}]} 
+    },
+    {
+        "name": "get payslip data in company A",
+        "payload":{"z":"dsRD+yT9kkXnszWbBTNpZ9V6wy3yrezGCdQV+/NIZ1I51vSqWMqVwcLS44UO/axw9iPKIRWVxChXXjnlteg6PaK9rOv8RvH0LlNkv03HMNWxUtat5MyjlmNxNzijJylcQeV7X/lKN2lNzU9Hd+OqPsNq2Ulceg9CLP617/FV+XIKAUaia+B/EqITq4kmvyPfZ//o99vceh7aXWx1QObsLJ0NsYNTyhomzOrUhmnwSbX6BpFwrnqpf6xqvJcGV0D1vXW2C0Ptc6WfNoBWcgOIG2Bzb5xOGPaWCksJDcz0XncAwTHkRrCw9VJOW5uhgaf23KRQlns4huG7WMD6jcE+mCocdmVV4uGxwCgDGbiQNVrtxOaGdjaSSTiKuE4z6r+wbZI5Gcft/K/Gd/kv6thHkG9370wbIMKYlvyopzPGcvIO6ZYoBXCd+JOLCmvSgi1NHclDGAz0jvKe4SS0eUUTHQ2kkEqL1jsYl/Q7R2pRBi0z+6I6YCIGh6whbeNrMR/E8GhiyrWDfSpB8KLEpRp8waOvjMToezqTQguWkUsQx6wApVGmjbi12rChGvToTZZeHWWsBaF36Ugo8cblcNbGo2yPYZrn9Sb2iRDXyix7BA8xmwBBOazR7+/ZkZExQaXx7DSkfViOIddW44+EZLFUi+TPQYTvNUEHfM+WbiGNtj9VjGrizTRmtQCNfTC3F5Azis4IapdZxZGpjiSA9ea5iy3pOzBnZtsbEINTLRyiCP2O9f0D6kbYbLOZi7PlWPt7vHLhrfH1EY+rbr+l1VM67pheIs1AFj0mWODxbcruckwb7cwImektXxEmEiDa79/W0Jnsow1K7vzLeuLNsDOx/NgTLOBLQaQmlfcQpJl4HKE1409BNtLQ8iyUfcAe8pxWUOilgjtzxcsHpo0axYcApFGbeFJH48yVq2j4CJM8ASwH+9CWzrHAMPqmByxmAo3G","y":"xd8ZBtUaYP0n1fS6GAjZAA==","x":"TknhdVOl3ES1EKgqcajclTSyuXuJTHQwUlsCvD5tN58="},
+        "decrypted_payload":{"appname"=>"employee-listing", "app_version"=>"live", "searches"=>[{"appname"=>"employee-listing", "app_version"=>"live", "type"=>"custom.payslips", "constraints"=>[{"key"=>"company_custom_company", "value"=>"1348695171700984260__LOOKUP__1663328287094x260654907396456450", "constraint_type"=>"equals"}], "sorts_list"=>[], "from"=>0, "n"=>10, "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVDp.%el.cmVEa.%el.cmVFa.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVDp.%el.cmVEa.%el.cmVFa\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}", "extra"=>{"lookup"=>["user1_user"]}}]}
+    },
+]
