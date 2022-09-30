@@ -5,10 +5,14 @@
 www.hellohr.co.za	FALSE	/	TRUE	1666090814	first_session	%7B%22visits%22%3A1%2C%22start%22%3A1663326014234%2C%22last_visit%22%3A1663326014234%2C%22url%22%3A%22https%3A%2F%2Fwww.hellohr.co.za%2F%22%2C%22path%22%3A%22%2F%22%2C%22referrer%22%3A%22https%3A%2F%2Fwww.google.com%2F%22%2C%22referrer_info%22%3A%7B%22host%22%3A%22www.google.com%22%2C%22path%22%3A%22%2F%22%2C%22protocol%22%3A%22https%3A%22%2C%22port%22%3A80%2C%22search%22%3A%22%22%2C%22query%22%3A%7B%7D%7D%2C%22search%22%3A%7B%22engine%22%3A%22Google%22%2C%22terms%22%3Anull%7D%2C%22version%22%3A0.4%7D
 .www.hellohr.co.za	TRUE	/	FALSE	1694862023	_fw_crm_v	08873e5d-0dd7-4afa-e770-0e1b663872c0
 .hellohr.co.za	TRUE	/	FALSE	1698744066	_ga	GA1.1.496444998.1664184067
-.hellohr.co.za	TRUE	/	TRUE	1695904234	_hjSessionUser_1859309	eyJpZCI6ImU2MTlhMjRmLWU3NTMtNTk2OC1hMWE2LTdhMjMyN2Y0NGIzMyIsImNyZWF0ZWQiOjE2NjQxODQwNjY4MjcsImV4aXN0aW5nIjp0cnVlfQ==
+.hellohr.co.za	TRUE	/	TRUE	1695990549	_hjSessionUser_1859309	eyJpZCI6ImU2MTlhMjRmLWU3NTMtNTk2OC1hMWE2LTdhMjMyN2Y0NGIzMyIsImNyZWF0ZWQiOjE2NjQxODQwNjY4MjcsImV4aXN0aW5nIjp0cnVlfQ==
 app.hellohr.co.za	FALSE	/	FALSE	1695720093	joe-chnlcustid	0320c6fd-7d0a-41ef-8fe3-046584519e75
 app.hellohr.co.za	FALSE	/	FALSE	1695720094	spd-custhash	a102eefe89e5cbc79f12098685795739a3bab1eb
 .app.hellohr.co.za	TRUE	/	TRUE	1664454626	employee-listing_live_u2main	1664368212052x476816399406570800
 .app.hellohr.co.za	TRUE	/	TRUE	1664454626	employee-listing_live_u2main.sig	yvNV0-EpCWIr0S33woukQruBEMo
 .app.hellohr.co.za	TRUE	/	TRUE	0	employee-listing_u1main	1663326026672x619453597084089700
-.hellohr.co.za	TRUE	/	FALSE	1698928234	_ga_BH21BD7T9L	GS1.1.1664367237.35.1.1664368234.0.0.0
+.hellohr.co.za	TRUE	/	FALSE	1699014549	_ga_BH21BD7T9L	GS1.1.1664454549.36.0.1664454549.0.0.0
+app.hellohr.co.za	FALSE	/	TRUE	1664454669	_hjIncludedInSessionSample	0
+.hellohr.co.za	TRUE	/	TRUE	1664456349	_hjSession_1859309	eyJpZCI6IjI3MTQyZDk3LWJmMDUtNGUxNS04ZjZkLTdkNDg4NGQ0OTQxMSIsImNyZWF0ZWQiOjE2NjQ0NTQ1NDk2NTAsImluU2FtcGxlIjpmYWxzZX0=
+app.hellohr.co.za	FALSE	/	TRUE	1664454669	_hjIncludedInPageviewSample	1
+.hellohr.co.za	TRUE	/	TRUE	1664456349	_hjAbsoluteSessionInProgress	0
