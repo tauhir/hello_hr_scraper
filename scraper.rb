@@ -61,11 +61,10 @@ class Scraper
     account_id = response_data["data"]["account_custom_account"]
     user_id = response_data["data"]["Created By"] #concern is that this could be a different user but we hope not or we hope they don't care
     # now we need to check how many companies there are with an maggregate search
-    company_count =get_aggregate_companies(account_id, user_id,extra_headers)
-  
+    company_count = get_aggregate_companies(account_id, user_id,extra_headers)
     # now build the payload and get the company information
     main_conn = create_main_conn(extra_headers)
-    get_company_data(main_conn, account_id, company_count)
+    company_data = get_company_data(main_conn, account_id, company_count)
   end
 
   private
@@ -90,10 +89,18 @@ class Scraper
   def get_company_data(connection, account, company_count)
     payload = build_company_payload(account,company_count)
     response = connection.post('post',payload.to_json) # this works
-    byebug
-
+    response = JSON.parse(response.body)["responses"]
     # response format is a bit weird, see sample_company_response.json
-    #now work with response and store 3 companies
+    # first company is in ["responses"][0]["hits"]["hits"]
+    # the rest are in ["responses"][1]["hits"]["hits"]
+    company_array = []
+    for i in 0..(company_count-1)
+      company_hash = {"company_info":{},"company_name":"","employees":[{"employeeInfo":{},"payrollData":[]}]}
+      company_hash["company_info"] = i < 1 ? response[0]["hits"]["hits"][0]["_source"] : response[1]["hits"]["hits"][i-1]["_source"]
+      company_hash["company_name"] = company_hash["company_info"]["company_name_text"]
+      company_array.append(company_hash)
+   end
+   company_array
   end
 
   def build_aggregate_payload(account,user)
