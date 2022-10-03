@@ -78,6 +78,9 @@ class Scraper
       this_company_hash = @@data_hash["company_data"][i]
       id = this_company_hash["company_info"]["_id"]
       employees_count = get_aggregate_employees(extra_headers, id)
+      payload = build_employees_payload(account,employees_count)
+      response = connection.post('post',payload.to_json) # this works
+      response = JSON.parse(response.body)["responses"]
       byebug
     end
 
@@ -294,6 +297,69 @@ class Scraper
     working_hash["searches"] = final_hash
     encrypt_payload('employee-listing',working_hash)
   end
+
+  def build_employees_payload(account,employees_count)
+    hash = 
+    {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "searches": [
+        {
+          "appname": "employee-listing",
+          "app_version": "live",
+          "type": "user",
+          "constraints": [
+            {
+              "key": "_id",
+              "constraint_type": "not equal",
+              "value": "admin_user"
+            },
+            {
+              "key": "_id",
+              "constraint_type": "not equal",
+              "value": "admin_user_employee-listing_live"
+            },
+            {
+              "key": "_id",
+              "constraint_type": "not equal",
+              "value": "admin_user_employee-listing_live"
+            },
+            {
+              "key": "_id",
+              "constraint_type": "not equal",
+              "value": "admin_user_employee-listing_test"
+            },
+            {
+              "key": "company1_custom_company",
+              "value": "1348695171700984260__LOOKUP__1664272257316x854080539290239000",
+              "constraint_type": "equals"
+            },
+            {
+              "key": "user_signed_up",
+              "constraint_type": "equals",
+              "value": true
+            }
+          ],
+          "sorts_list": [
+            {
+              "sort_field": "last_name_text",
+              "descending": false
+            }
+          ],
+          "from": 0,
+          "n": 1,
+          "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+        }
+      ]
+    }
+    account = @@data_hash["config_data"][:account_id]
+    user = @@data_hash["config_data"][:user_id]
+    user_id = user.split("__")[0]
+    # to do still
+    hash[:aggregates][0][:constraints][4][:value] = "#{user_id}__LOOKUP__#{id}"
+
+  end
+
 
   def decrypt_payload(context, x, y, z)
     decrypt = ->(e, t, r, data) {
