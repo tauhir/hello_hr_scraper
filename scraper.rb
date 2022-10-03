@@ -1,6 +1,7 @@
 require 'faraday'
 require 'faraday/retry'
 require 'byebug'
+require 'securerandom'
 # get cookie txt file from user
 # convert to hash which can be used in faraday
 # do initialisation url to get user id
@@ -9,7 +10,7 @@ require 'byebug'
 # get payroll info
 # get paycycle info (not done before)
 # cookies remain the same throughout the website, msearch path can be used to get all the info above, just need to change the payload accordingly. 
-
+#  #decrypt_payload("employee-listing",payload[:x],payload[:y],payload[:z])
 
 class Scraper
 
@@ -44,7 +45,12 @@ class Scraper
     # import file
     cookies = File.readlines("/home/tauhir/hello_hr/hellohr.co.za_cookies.txt",chomp: true).map {|line| line.split("\t")}
     cookies = cookies.slice(4,cookies.size-4) #ignore first 4 lines
-    cookies = cookies.map {|line| line.slice(5,2)}.to_h.map {|h| h.join '=' }.join(';')
+    cookies = cookies.map {|line| line.slice(5,2)}.to_h
+    cookies.delete('first_session')
+    cookies.delete('_fw_crm_v') # these two cookies cause issues, they're not included in the requests
+    cookies = cookies.map {|h| h.join '=' }.join(';')
+    cook = "_ga=GA1.1.496444998.1664184067; _hjSessionUser_1859309=eyJpZCI6ImU2MTlhMjRmLWU3NTMtNTk2OC1hMWE2LTdhMjMyN2Y0NGIzMyIsImNyZWF0ZWQiOjE2NjQxODQwNjY4MjcsImV4aXN0aW5nIjp0cnVlfQ==; joe-chnlcustid=0320c6fd-7d0a-41ef-8fe3-046584519e75; spd-custhash=a102eefe89e5cbc79f12098685795739a3bab1eb; employee-listing_live_u2main=1664780285681x371563801862858200; employee-listing_live_u2main.sig=1rRws_IUeSmOwkPmAA3QJUJ22Aw; employee-listing_u1main=1663326026672x619453597084089700; _hjIncludedInSessionSample=0; _hjSession_1859309=eyJpZCI6IjBkMzkzMTk0LTA3Y2QtNDkxOC1hOWRmLTBkZDBjYWNlYmZhZCIsImNyZWF0ZWQiOjE2NjQ3OTc2NzkzODYsImluU2FtcGxlIjpmYWxzZX0=; _hjIncludedInPageviewSample=1; _hjAbsoluteSessionInProgress=1; _ga_BH21BD7T9L=GS1.1.1664797677.37.1.1664797910.0.0.0"
+    #byebug
     extra_headers['Cookie'] = cookies
     # use the init url to get the user_id used as a key in the payloads
     init_url = "https://app.hellohr.co.za/api/1.1/init/data?location=https%3A%2F%2Fapp.hellohr.co.za%2F"
@@ -54,7 +60,6 @@ class Scraper
     response_data = JSON.parse(resp.body)[0]
     account_id = response_data["data"]["account_custom_account"]
     user_id = response_data["data"]["Created By"] #concern is that this could be a different user but we hope not or we hope they don't care
-    
     # now we need to check how many companies there are with an maggregate search
     company_count =get_aggregate_companies(account_id, user_id,extra_headers)
   
@@ -63,8 +68,7 @@ class Scraper
     get_company_data(main_conn, account_id, company_count)
   end
 
-
-    private
+  private
 
   def get_aggregate_companies(account, user,headers)
     payload = build_aggregate_payload(account, user)
@@ -73,7 +77,6 @@ class Scraper
       headers: headers
     )
     response = agg_conn.post('post',payload.to_json, headers)
-    byebug
     JSON.parse(response.body)["responses"][0]['count']
   end
 
@@ -87,6 +90,9 @@ class Scraper
   def get_company_data(connection, account, company_count)
     payload = build_company_payload(account,company_count)
     response = connection.post('post',payload.to_json) # this works
+    byebug
+
+    # response format is a bit weird, see sample_company_response.json
     #now work with response and store 3 companies
   end
 
@@ -141,7 +147,7 @@ class Scraper
       hash["aggregates"][1]["constraints"][0]["value"] = account
       hash["aggregates"][1]["constraints"][1]["value"] = user
       hash["aggregates"][1]["constraints"][2]["value"] = user
-      hash
+      encrypt_payload('employee-listing',hash)
   end
   def build_company_payload(user_id,company_count)
     working_hash = {
@@ -163,22 +169,24 @@ class Scraper
       "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
     }
     final_hash = []
-    this_hash = hash.clone
-    hash["from"] = count-1
-    hash["n"] = 1
+    this_hash = company_hash.clone
+    this_hash["from"] = company_count-1
+    this_hash["n"] = 1
     final_hash.append(this_hash)
 
-    if count > 1
-      this_hash = hash.clone
-      hash["from"] = 0
-      hash["n"] = count-1
+    if company_count > 1
+      this_hash = company_hash.clone
+      this_hash["from"] = 0
+      this_hash["n"] = company_count-1
       final_hash.append(this_hash) 
     end
 
-    this_hash = hash.clone
-    hash["from"] = count > 1 ? count : 0
-    hash["n"] = 10-count
+    this_hash = company_hash.clone
+    this_hash["from"] = company_count > 1 ? company_count : 0
+    this_hash["n"] = 10-company_count
     final_hash.append(this_hash)
+    working_hash["searches"] = final_hash
+    encrypt_payload('employee-listing',working_hash)
   end
 
   def decrypt_payload(context, x, y, z)

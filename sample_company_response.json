@@ -1,0 +1,316 @@
+{
+    "responses": [
+      {
+        "hits": {
+          "total": 4,
+          "hits": [
+            {
+              "_version": 12262601,
+              "found": true,
+              "_source": {
+                "sdl_exempt_boolean": false,
+                "address_geographic_address": {
+                  "lat": 48.4660735,
+                  "lng": 35.0440357,
+                  "address": "Dmytra Yavornytskoho Ave, 54, Dnipro, Dnipropetrovs'ka oblast, Ukraine, 49000",
+                  "components": {
+                    "city": "Dnipro",
+                    "state": "Dnipropetrovs'ka oblast",
+                    "street": "Dmytra Yavornytskoho Avenue",
+                    "country": "Ukraine",
+                    "zip code": "49000",
+                    "state code": "Dnipropetrovs'ka oblast",
+                    "country code": "UA",
+                    "street number": "54"
+                  }
+                },
+                "leave_policy__sick__list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1664272257381x238993595058938140"
+                ],
+                "leave_policy__compassion__list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1664272257477x303099910118627100"
+                ],
+                "leave_policy__annual_1_list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1664272257329x959277278417598500"
+                ],
+                "admins_list_user": [
+                  "1348695171700984260__LOOKUP__1663326026672x619453597084089700"
+                ],
+                "Created Date": 1664272256846,
+                "company_name_text": "Test23",
+                "company_ta_name_text": "test",
+                "account_custom_account": "1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+                "Modified Date": 1664272276319,
+                "Created By": "1348695171700984260__LOOKUP__1663326026672x619453597084089700",
+                "payslip_show_leave_boolean": false,
+                "payslip_address_option_payroll_settings_address": "residential",
+                "payroll_first_month_date": 1664272256339,
+                "address_duplicate_res_to_postal_boolean": true,
+                "billable_type_option_billable_type": "billable",
+                "company_registration_number_text": "256655",
+                "paycycles_list_custom_paycycle": [
+                  "1348695171700984260__LOOKUP__1664272257316x409662086212747260"
+                ],
+                "uif_number_valid__boolean": false,
+                "uses_gate_keeper__boolean": false,
+                "_id": "1664272257316x854080539290239000",
+                "_version": 12262601,
+                "_type": "custom.company"
+              },
+              "_type": "custom.company",
+              "_id": "1664272257316x854080539290239000"
+            }
+          ]
+        },
+        "at_end": true,
+        "search_version": 1664802264892,
+        "extras": []
+      },
+      {
+        "hits": {
+          "hits": [
+            {
+              "_version": 11901294,
+              "found": true,
+              "_source": {
+                "sdl_exempt_boolean": false,
+                "address__postal__geographic_address": {
+                  "lat": -33.9248685,
+                  "lng": 18.4240553,
+                  "address": "Cape Town, South Africa",
+                  "components": {
+                    "city": "Cape Town",
+                    "state": "Western Cape",
+                    "county": "Cape Town",
+                    "country": "South Africa",
+                    "state code": "WC",
+                    "country code": "ZA"
+                  }
+                },
+                "address_geographic_address": {
+                  "lat": -33.9248685,
+                  "lng": 18.4240553,
+                  "address": "Cape Town, South Africa",
+                  "components": {
+                    "city": "Cape Town",
+                    "state": "Western Cape",
+                    "county": "Cape Town",
+                    "country": "South Africa",
+                    "state code": "WC",
+                    "country code": "ZA"
+                  }
+                },
+                "leave_policy__sick__list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1663328287649x444592506207412100"
+                ],
+                "leave_policy__compassion__list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1663328287716x777048795177700100"
+                ],
+                "leave_policy__annual_1_list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1663328287638x576078905442729100"
+                ],
+                "address_0_unit_and_building_text": "Unit A",
+                "admins_list_user": [
+                  "1348695171700984260__LOOKUP__1663326026672x619453597084089700"
+                ],
+                "Created Date": 1663328287246,
+                "company_name_text": "The Good Sauce",
+                "company_ta_name_text": "The Good Sauce",
+                "account_custom_account": "1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+                "users_list_user": [
+                  "1348695171700984260__LOOKUP__1663326026672x619453597084089700",
+                  "1348695171700984260__LOOKUP__1663328358528x936154408343889000"
+                ],
+                "Modified Date": 1663329235934,
+                "Created By": "1348695171700984260__LOOKUP__1663326026672x619453597084089700",
+                "unit_and_building__postal__text": "Unit A",
+                "payslip_show_leave_boolean": false,
+                "payslip_address_option_payroll_settings_address": "residential",
+                "payroll_pay_date_option_pay_dates": "last_day_of_the_month",
+                "payroll_first_month_date": 1617141600000,
+                "address_duplicate_res_to_postal_boolean": true,
+                "billable_type_option_billable_type": "billable",
+                "company_registration_number_text": "1234567",
+                "paycycles_list_custom_paycycle": [
+                  "1348695171700984260__LOOKUP__1663328288296x965639724506274700"
+                ],
+                "uif_number_valid__boolean": false,
+                "uses_gate_keeper__boolean": false,
+                "_id": "1663328287094x260654907396456450",
+                "_version": 11901294,
+                "_type": "custom.company"
+              },
+              "_type": "custom.company",
+              "_id": "1663328287094x260654907396456450"
+            },
+            {
+              "_version": 11901676,
+              "found": true,
+              "_source": {
+                "sdl_exempt_boolean": false,
+                "address__postal__geographic_address": {
+                  "lat": -33.92376,
+                  "lng": 18.41429,
+                  "address": "125 Buitengracht St, Cape Town City Centre, Cape Town, 8000, South Africa",
+                  "components": {
+                    "city": "Cape Town",
+                    "state": "Western Cape",
+                    "county": "Cape Town",
+                    "street": "Buitengracht Street",
+                    "country": "South Africa",
+                    "zip code": "8000",
+                    "state code": "WC",
+                    "country code": "ZA",
+                    "street number": "125"
+                  }
+                },
+                "address_geographic_address": {
+                  "lat": -33.92376,
+                  "lng": 18.41429,
+                  "address": "125 Buitengracht St, Cape Town City Centre, Cape Town, 8000, South Africa",
+                  "components": {
+                    "city": "Cape Town",
+                    "state": "Western Cape",
+                    "county": "Cape Town",
+                    "street": "Buitengracht Street",
+                    "country": "South Africa",
+                    "zip code": "8000",
+                    "state code": "WC",
+                    "country code": "ZA",
+                    "street number": "125"
+                  }
+                },
+                "leave_policy__sick__list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1663329641304x343573903867622000"
+                ],
+                "leave_policy__compassion__list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1663329641451x484227805629960060"
+                ],
+                "leave_policy__annual_1_list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1663329641239x940603705831175600"
+                ],
+                "address_0_unit_and_building_text": "3rd Floor",
+                "admins_list_user": [
+                  "1348695171700984260__LOOKUP__1663326026672x619453597084089700"
+                ],
+                "Created Date": 1663329640324,
+                "paye_reference__text": "3777284",
+                "company_logo_image": "//s3.amazonaws.com/appforest_uf/f1603105729037x368732599510706050/Dunder_Mifflin%2C_Inc.svg.png",
+                "branch_number__uif__text": "40695",
+                "company_name_text": "Dunder Mifflin (Demo organisation)",
+                "uif_employer_reference_number_text": "10067498",
+                "company_ta_name_text": "Dunder Mifflin (Demo organisation)",
+                "account_custom_account": "1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+                "users_list_user": [
+                  "1348695171700984260__LOOKUP__1663329640627x642324917504184700",
+                  "1348695171700984260__LOOKUP__1663329641006x366228513009330100"
+                ],
+                "Modified Date": 1663329642070,
+                "Created By": "1348695171700984260__LOOKUP__1663326026672x619453597084089700",
+                "unit_and_building__postal__text": "3rd Floor",
+                "payslip_show_leave_boolean": false,
+                "payslip_address_option_payroll_settings_address": "residential",
+                "payroll_first_month_date": 1617141600000,
+                "address_duplicate_res_to_postal_boolean": true,
+                "billable_type_option_billable_type": "demo",
+                "paycycles_list_custom_paycycle": [
+                  "1348695171700984260__LOOKUP__1663329641249x798169525388523500"
+                ],
+                "uif_number_valid__boolean": false,
+                "uses_gate_keeper__boolean": false,
+                "_id": "1663329640319x300816591957919550",
+                "_version": 11901676,
+                "_type": "custom.company"
+              },
+              "_type": "custom.company",
+              "_id": "1663329640319x300816591957919550"
+            },
+            {
+              "_version": 12227441,
+              "found": true,
+              "_source": {
+                "sdl_exempt_boolean": false,
+                "address__postal__geographic_address": {
+                  "lat": 40.7334931,
+                  "lng": -73.9880687,
+                  "address": "140 E 14th St, New York, NY 10003, USA",
+                  "components": {
+                    "city": "New York",
+                    "state": "New York",
+                    "county": "New York County",
+                    "street": "East 14th Street",
+                    "country": "United States",
+                    "zip code": "10003",
+                    "state code": "NY",
+                    "country code": "US",
+                    "street number": "140"
+                  }
+                },
+                "address_geographic_address": {
+                  "lat": 40.7334931,
+                  "lng": -73.9880687,
+                  "address": "140 E 14th St, New York, NY 10003, USA",
+                  "components": {
+                    "city": "New York",
+                    "state": "New York",
+                    "county": "New York County",
+                    "street": "East 14th Street",
+                    "country": "United States",
+                    "zip code": "10003",
+                    "state code": "NY",
+                    "country code": "US",
+                    "street number": "140"
+                  }
+                },
+                "leave_policy__sick__list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1664202675656x931229909566116200"
+                ],
+                "leave_policy__compassion__list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1664202675812x105285778749089280"
+                ],
+                "leave_policy__annual_1_list_custom_leave_policy": [
+                  "1348695171700984260__LOOKUP__1664202675516x245708674389069730"
+                ],
+                "admins_list_user": [
+                  "1348695171700984260__LOOKUP__1663326026672x619453597084089700"
+                ],
+                "Created Date": 1664202674684,
+                "company_name_text": "Test12",
+                "company_ta_name_text": "Test12",
+                "account_custom_account": "1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+                "Modified Date": 1664202697073,
+                "Created By": "1348695171700984260__LOOKUP__1663326026672x619453597084089700",
+                "payslip_show_leave_boolean": false,
+                "payslip_address_option_payroll_settings_address": "residential",
+                "payroll_first_month_date": 1664202674069,
+                "address_duplicate_res_to_postal_boolean": true,
+                "billable_type_option_billable_type": "billable",
+                "company_registration_number_text": "1234567",
+                "paycycles_list_custom_paycycle": [
+                  "1348695171700984260__LOOKUP__1664202673987x615717943542284300"
+                ],
+                "uif_number_valid__boolean": false,
+                "uses_gate_keeper__boolean": false,
+                "_id": "1664202673987x217801569324236800",
+                "_version": 12227441,
+                "_type": "custom.company"
+              },
+              "_type": "custom.company",
+              "_id": "1664202673987x217801569324236800"
+            }
+          ]
+        },
+        "at_end": false,
+        "search_version": 1664802264919,
+        "extras": []
+      },
+      {
+        "hits": {
+          "hits": []
+        },
+        "at_end": true,
+        "search_version": 1664802265004,
+        "extras": []
+      }
+    ]
+  }
