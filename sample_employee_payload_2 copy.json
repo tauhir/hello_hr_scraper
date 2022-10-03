@@ -1,0 +1,52 @@
+{
+  "appname": "employee-listing",
+  "app_version": "live",
+  "searches": [
+    {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "type": "user",
+      "constraints": [
+        {
+          "key": "_id",
+          "constraint_type": "not equal",
+          "value": "admin_user"
+        },
+        {
+          "key": "_id",
+          "constraint_type": "not equal",
+          "value": "admin_user_employee-listing_live"
+        },
+        {
+          "key": "_id",
+          "constraint_type": "not equal",
+          "value": "admin_user_employee-listing_live"
+        },
+        {
+          "key": "_id",
+          "constraint_type": "not equal",
+          "value": "admin_user_employee-listing_test"
+        },
+        {
+          "key": "company1_custom_company",
+          "value": "1348695171700984260__LOOKUP__1664272257316x854080539290239000",
+          "constraint_type": "equals"
+        },
+        {
+          "key": "user_signed_up",
+          "constraint_type": "equals",
+          "value": true
+        }
+      ],
+      "sorts_list": [
+        {
+          "sort_field": "last_name_text",
+          "descending": false
+        }
+      ],
+      "from": 0,
+      "n": 1,
+      "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    }
+  ]
+}

@@ -13,9 +13,9 @@ require 'securerandom'
 #  #decrypt_payload("employee-listing",payload[:x],payload[:y],payload[:z])
 
 class Scraper
-
+  @@data_hash = {}
   def scrape_data(filename)
-
+    
     extra_headers = {
       'Accept': 'application/json, text/javascript, */*; q=0.01',
      'Accept-Language': 'en-US,en;q=0.9',
@@ -61,16 +61,32 @@ class Scraper
     account_id = response_data["data"]["account_custom_account"]
     user_id = response_data["data"]["Created By"] #concern is that this could be a different user but we hope not or we hope they don't care
     # now we need to check how many companies there are with an maggregate search
-    company_count = get_aggregate_companies(account_id, user_id,extra_headers)
+    
+    @@data_hash["config_data"] = {:account_id => account_id,:user_id => user_id}
     # now build the payload and get the company information
+    company_count = get_aggregate_companies(extra_headers)
+    @@data_hash["config_data"][:company_count] =  company_count
     main_conn = create_main_conn(extra_headers)
     company_data = get_company_data(main_conn, account_id, company_count)
+    @@data_hash["company_data"] = company_data
+    # now build the employee payload and get the data for each company
+    #sample_employee_payload is for The Good Sauce
+
+#for each company, get the ID, get employee data (magg + msearch) and payroll data (magg + msearch) 
+    for i in 0..@@data_hash["config_data"][:company_count]
+      
+      this_company_hash = @@data_hash["company_data"][i]
+      id = this_company_hash["company_info"]["_id"]
+      employees_count = get_aggregate_employees(extra_headers, id)
+      byebug
+    end
+
   end
 
   private
 
-  def get_aggregate_companies(account, user,headers)
-    payload = build_aggregate_payload(account, user)
+  def get_aggregate_companies(headers)
+    payload = build_aggregate_payload(scope = "companies")
     agg_conn = Faraday.new(
       url: "https://app.hellohr.co.za/elasticsearch/maggregate",
       headers: headers
@@ -78,6 +94,18 @@ class Scraper
     response = agg_conn.post('post',payload.to_json, headers)
     JSON.parse(response.body)["responses"][0]['count']
   end
+
+  def get_aggregate_employees(headers,id)
+    payload = build_aggregate_payload(scope = "employees",id = id)
+    agg_conn = Faraday.new(
+      url: "https://app.hellohr.co.za/elasticsearch/maggregate",
+      headers: headers
+    )
+    response = agg_conn.post('post',payload.to_json, headers)
+    JSON.parse(response.body)["responses"][0]['count']
+    # now need to get employees and payroll
+  end
+
 
   def create_main_conn(headers)
     main_conn = Faraday.new(
@@ -103,59 +131,130 @@ class Scraper
    company_array
   end
 
-  def build_aggregate_payload(account,user)
-    hash = 
-    {
-      "appname"=>"employee-listing",
-      "app_version"=>"live",
-      "aggregates"=>[{
-          "appname"=>"employee-listing",
-          "app_version"=>"live",
-          "type"=>"custom.company",
-          "constraints"=>[{"key"=>"account_custom_account",
-          "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
-          "constraint_type"=>"equals"}],
-          "aggregate"=>{
-              "fns"=>[{"n"=>"count"}]},
-          "search_path"=>"{\"constructor_name\":\"DataSource\",
-          \"args\":[{\"type\":\"json\",
-          \"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0.%p.%ds\"},
-          {\"type\":\"node\",
-          \"value\":{\"constructor_name\":\"Element\",
-          \"args\":[{\"type\":\"json\",
-          \"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0\"}]}},
-          {\"type\":\"raw\",
-          \"value\":\"Search\"}]}"},
-          {"appname"=>"employee-listing",
-          "app_version"=>"live",
-          "type"=>"custom.company",
-          "constraints"=>[{"key"=>"account_custom_account",
-          "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
-          "constraint_type"=>"equals"},
-          {"key"=>"restricted_users_list_user",
-          "value"=>"1348695171700984260__LOOKUP__1663326026672x619453597084089700",
-          "constraint_type"=>"not contains"},
-          {"key"=>"restricted_users_list_user",
-          "value"=>"1348695171700984260__LOOKUP__1663326026672x619453597084089700",
-          "constraint_type"=>"not contains"}],
-          "aggregate"=>{"fns"=>[{"n"=>"count"}]},
-          "search_path"=>"{\"constructor_name\":\"DataSource\",
-          \"args\":[{\"type\":\"json\",
-          \"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},
-          {\"type\":\"node\",
-          \"value\":{\"constructor_name\":\"Element\",
-          \"args\":[{\"type\":\"json\",
-          \"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},
-          {\"type\":\"raw\",
-          \"value\":\"Search\"}]}"}]
-      }
+  def build_aggregate_payload(scope, id = nil)
+    account = @@data_hash["config_data"][:account_id]
+    user = @@data_hash["config_data"][:user_id]
+    hash = {}
 
-      hash["aggregates"][0]["constraints"][0]["value"] = account
-      hash["aggregates"][1]["constraints"][0]["value"] = account
-      hash["aggregates"][1]["constraints"][1]["value"] = user
-      hash["aggregates"][1]["constraints"][2]["value"] = user
-      encrypt_payload('employee-listing',hash)
+    case scope
+    when "companies"
+      hash = 
+      {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "aggregates"=>[{
+            "appname"=>"employee-listing",
+            "app_version"=>"live",
+            "type"=>"custom.company",
+            "constraints"=>[{"key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"}],
+            "aggregate"=>{
+                "fns"=>[{"n"=>"count"}]},
+            "search_path"=>"{\"constructor_name\":\"DataSource\",
+            \"args\":[{\"type\":\"json\",
+            \"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0.%p.%ds\"},
+            {\"type\":\"node\",
+            \"value\":{\"constructor_name\":\"Element\",
+            \"args\":[{\"type\":\"json\",
+            \"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTKIx0.%el.bTKMa0\"}]}},
+            {\"type\":\"raw\",
+            \"value\":\"Search\"}]}"},
+            {"appname"=>"employee-listing",
+            "app_version"=>"live",
+            "type"=>"custom.company",
+            "constraints"=>[{"key"=>"account_custom_account",
+            "value"=>"1348695171700984260__LOOKUP__1663328248371x393063430788218900",
+            "constraint_type"=>"equals"},
+            {"key"=>"restricted_users_list_user",
+            "value"=>"1348695171700984260__LOOKUP__1663326026672x619453597084089700",
+            "constraint_type"=>"not contains"},
+            {"key"=>"restricted_users_list_user",
+            "value"=>"1348695171700984260__LOOKUP__1663326026672x619453597084089700",
+            "constraint_type"=>"not contains"}],
+            "aggregate"=>{"fns"=>[{"n"=>"count"}]},
+            "search_path"=>"{\"constructor_name\":\"DataSource\",
+            \"args\":[{\"type\":\"json\",
+            \"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},
+            {\"type\":\"node\",
+            \"value\":{\"constructor_name\":\"Element\",
+            \"args\":[{\"type\":\"json\",
+            \"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},
+            {\"type\":\"raw\",
+            \"value\":\"Search\"}]}"}]
+        }
+  
+        hash["aggregates"][0]["constraints"][0]["value"] = account
+        hash["aggregates"][1]["constraints"][0]["value"] = account
+        hash["aggregates"][1]["constraints"][1]["value"] = user
+        hash["aggregates"][1]["constraints"][2]["value"] = user
+    when "employees"
+      hash = 
+      {
+        "appname": "employee-listing",
+        "app_version": "live",
+        "aggregates": [
+          {
+            "appname": "employee-listing",
+            "app_version": "live",
+            "type": "user",
+            "constraints": [
+              {
+                "key": "_id",
+                "constraint_type": "not equal",
+                "value": "admin_user"
+              },
+              {
+                "key": "_id",
+                "constraint_type": "not equal",
+                "value": "admin_user_employee-listing_live"
+              },
+              {
+                "key": "_id",
+                "constraint_type": "not equal",
+                "value": "admin_user_employee-listing_live"
+              },
+              {
+                "key": "_id",
+                "constraint_type": "not equal",
+                "value": "admin_user_employee-listing_test"
+              },
+              {
+                "key": "company1_custom_company",
+                "value": "1348695171700984260__LOOKUP__1664272257316x854080539290239000",
+                "constraint_type": "equals"
+              },
+              {
+                "key": "user_signed_up",
+                "constraint_type": "equals",
+                "value": true
+              }
+            ],
+            "aggregate": {
+              "fns": [
+                {
+                  "n": "count"
+                }
+              ]
+            },
+            "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSXF.%el.cmSXM\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+          }
+        ]
+      }
+      if hash[:aggregates][0][:constraints][4][:key] == "company1_custom_company"
+        # value takes the format of "{{user_id}}__LOOKUP__{{company_id}} e.g"1348695171700984260__LOOKUP__1664272257316x854080539290239000"
+        user_id = user.split("__")[0]
+        hash[:aggregates][0][:constraints][4][:value] = "#{user_id}__LOOKUP__#{id}"
+      else
+        puts "building employee maggregate payload failed"
+      end
+    else
+      puts "provide scope"
+    end
+
+    encrypt_payload('employee-listing',hash)
   end
+
   def build_company_payload(user_id,company_count)
     working_hash = {
       "appname"=>"employee-listing",
