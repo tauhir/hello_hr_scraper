@@ -61,7 +61,6 @@ class Scraper
     account_id = response_data["data"]["account_custom_account"]
     user_id = response_data["data"]["Created By"] #concern is that this could be a different user but we hope not or we hope they don't care
     # now we need to check how many companies there are with an maggregate search
-    
     @@data_hash["config_data"] = {:account_id => account_id,:user_id => user_id}
     # now build the payload and get the company information
     company_count = get_aggregate_companies(extra_headers)
@@ -78,12 +77,48 @@ class Scraper
       this_company_hash = @@data_hash["company_data"][i]
       id = this_company_hash["company_info"]["_id"]
       employees_count = get_aggregate_employees(extra_headers, id)
-      payload = build_employees_payload(account,employees_count)
-      response = connection.post('post',payload.to_json) # this works
+      payload = build_employees_payload(id,employees_count)
+      response = main_conn.post('post',payload.to_json) # this works
       response = JSON.parse(response.body)["responses"]
+      employees = response[0]["hits"]["hits"]
+
+      #now get payslips
+      # can't find the maggregate search to get payslips number but we can use the employee data to
+      # get the total payslips in company. 
+
+      payslip_count = 0
+      employees.each do |emp|
+        byebug if emp.nil? or emp["_source"].nil?
+        payslips = emp["_source"]["payslips_list_custom_payslips"]
+        if !payslips.nil?
+          payslip_count = payslip_count + payslips.size
+        end
+      end
+      #now search for payslips
+      payslips = {}
+      if payslip_count > 0
+        payslip_count = payslip_count*1
+        build_payslip_payload(id,payslip_count)
+        payload = build_payslip_payload(id,payslip_count)
+        response = main_conn.post('post',payload.to_json) # this works
+        response = JSON.parse(response.body)["responses"]
+        response[0]["hits"]["hits"].each do |payslip|
+          payslips[payslip["_id"]] = payslip #changing data to a hash
+      end
+
+      # now work with payslips and employees to populate company hash
       byebug
     end
+    employees.each do |emp|
+      byebug if emp.nil? or emp["_source"].nil?
+      
+      employee_hash = {"employeeInfo":{},"payrollData":[]}
+      employee_hash["employeeInfo"] = emp["_source"]
+      employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
+        employee_hash["payrollData"].append(payslips[payslip_id])
+      end
 
+    end
   end
 
   private
@@ -126,7 +161,7 @@ class Scraper
     # the rest are in ["responses"][1]["hits"]["hits"]
     company_array = []
     for i in 0..(company_count-1)
-      company_hash = {"company_info":{},"company_name":"","employees":[{"employeeInfo":{},"payrollData":[]}]}
+      company_hash = {"company_info":{},"company_name":"","employees":[]}
       company_hash["company_info"] = i < 1 ? response[0]["hits"]["hits"][0]["_source"] : response[1]["hits"]["hits"][i-1]["_source"]
       company_hash["company_name"] = company_hash["company_info"]["company_name_text"]
       company_array.append(company_hash)
@@ -251,10 +286,10 @@ class Scraper
       else
         puts "building employee maggregate payload failed"
       end
+    when "payslips"
     else
       puts "provide scope"
     end
-
     encrypt_payload('employee-listing',hash)
   end
 
@@ -298,7 +333,7 @@ class Scraper
     encrypt_payload('employee-listing',working_hash)
   end
 
-  def build_employees_payload(account,employees_count)
+  def build_employees_payload(id,employees_count)
     hash = 
     {
       "appname": "employee-listing",
@@ -356,10 +391,63 @@ class Scraper
     user = @@data_hash["config_data"][:user_id]
     user_id = user.split("__")[0]
     # to do still
-    hash[:aggregates][0][:constraints][4][:value] = "#{user_id}__LOOKUP__#{id}"
-
+    
+    if hash[:searches][0][:constraints][4][:key] == "company1_custom_company"
+      # value takes the format of "{{user_id}}__LOOKUP__{{company_id}} e.g"1348695171700984260__LOOKUP__1664272257316x854080539290239000"
+      hash[:searches][0][:constraints][4][:value] = "#{user_id}__LOOKUP__#{id}"
+      hash[:searches][0]["n"] = employees_count
+    else
+      puts "building employee payload failed"
+      byebug
+    end
+    encrypt_payload('employee-listing',hash)
   end
 
+  def build_payslip_payload(id,payslips_count)
+    hash = {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "searches": [
+        {
+          "appname": "employee-listing",
+          "app_version": "live",
+          "type": "custom.payslips",
+          "constraints": [
+            {
+              "key": "company_custom_company",
+              "value": "1348695171700984260__LOOKUP__1663329640319x300816591957919550",
+              "constraint_type": "equals"
+            }
+          ],
+          "sorts_list": [],
+          "from": 10,
+          "n": 10,
+          "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVDp.%el.cmVEa.%el.cmVFa.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVDp.%el.cmVEa.%el.cmVFa\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}",
+          "extra": {
+            "lookup": [
+              "user1_user"
+            ]
+          }
+        }
+      ]
+    }
+    account = @@data_hash["config_data"][:account_id]
+    user = @@data_hash["config_data"][:user_id]
+    user_id = user.split("__")[0]
+    # to do still
+    
+    if hash[:searches][0][:constraints][0][:key] == "company_custom_company"
+      # value takes the format of "{{user_id}}__LOOKUP__{{company_id}} e.g"1348695171700984260__LOOKUP__1664272257316x854080539290239000"
+      hash[:searches][0][:constraints][0][:value] = "#{user_id}__LOOKUP__#{id}"
+      hash[:searches][0]["from"] = payslips_count < 10 ? 0 : (payslips_count/10.0).ceil*10 
+      hash[:searches][0]["n"] = (payslips_count/10.0).ceil*10 #rounding up to nearest 10, see "n" in decrypted payslip payloads
+
+    else
+      puts "building employee payload failed"
+      byebug
+    end
+    encrypt_payload('employee-listing',hash)
+  end
 
   def decrypt_payload(context, x, y, z)
     decrypt = ->(e, t, r, data) {
