@@ -15,7 +15,7 @@ require 'securerandom'
 class Scraper
   @@data_hash = {}
   def scrape_data(filename)
-    
+
     extra_headers = {
       'Accept': 'application/json, text/javascript, */*; q=0.01',
      'Accept-Language': 'en-US,en;q=0.9',
@@ -120,8 +120,22 @@ class Scraper
           employee_hash["payrollData"].append(payslips[payslip_id.split("__")[2]])
         end
         this_company_hash[:employees].append(employee_hash)
-
       end
+      
+      # now get paycycle info
+      payload = build_paycycle_payload(this_company_hash["company_info"]["paycycles_list_custom_paycycle"])
+      response = main_conn.post('post',payload.to_json)
+      response = JSON.parse(response.body)["responses"]
+      byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
+      #TODO:
+      #this is response for paycycle for dunder so payload is bad
+      # [{"hits"=>{"total"=>0, "hits"=>[]}, "at_end"=>true, "search_version"=>1665001253737, "extras"=>[]}, {"hits"=>{"total"=>0, "hits"=>[]}, "at_end"=>true, "search_version"=>1665001253744, "extras"=>[]}]
+      
+      
+      # sometimes the data is in a second array (I think if the user has more than a years worth of payroll? )
+      paycycles = response[0]["hits"]["hits"].empty? ? response[1]["hits"]["hits"] : response[0]["hits"]["hits"] 
+      this_company_hash["paycycles"] = response[0]["hits"]["hits"]
+
       @@data_hash["company_data"][i] = this_company_hash
       puts "scraped #{this_company_hash["company_name"]} with #{employees.size} employees, #{payslip_count} payslips"
     end
@@ -407,6 +421,40 @@ class Scraper
     else
       puts "building employee payload failed"
       byebug
+    end
+    encrypt_payload('employee-listing',hash)
+  end
+
+  def build_paycycle_payload(paycycle_array)
+    hash = 
+    {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "searches": []
+    }
+    account = @@data_hash["config_data"][:account_id]
+    user = @@data_hash["config_data"][:user_id]
+    user_id = user.split("__")[0]
+    search = {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "type": "custom.payroll",
+      "constraints": [
+        {
+          "key": "paycycle_custom_paycycle",
+          "value": "",
+          "constraint_type": "equals"
+        }
+      ],
+      "sorts_list": [],
+      "from": 0,
+      "n": 10,
+      "search_path": "{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%ed.bTPel1.%el.cmRsk0.%el.cmTKs0.%el.cmWHE1.%s.0\"}]}"
+    }
+    paycycle_array.each do |paycycle|
+      this_search = search
+      this_search[:constraints][0]["value"] = paycycle
+      hash[:searches].append(this_search)
     end
     encrypt_payload('employee-listing',hash)
   end
