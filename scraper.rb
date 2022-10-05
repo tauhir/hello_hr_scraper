@@ -72,9 +72,10 @@ class Scraper
     #sample_employee_payload is for The Good Sauce
 
     #for each company, get the ID, get employee data (magg + msearch) and payroll data (magg + msearch) 
-    for i in 0..@@data_hash["config_data"][:company_count]
+    for i in 0..(@@data_hash["config_data"][:company_count]-1)
       
       this_company_hash = @@data_hash["company_data"][i]
+      byebug if this_company_hash["company_info"].nil?
       id = this_company_hash["company_info"]["_id"]
       employees_count = get_aggregate_employees(extra_headers, id)
       payload = build_employees_payload(id,employees_count)
@@ -112,11 +113,11 @@ class Scraper
       employees.each do |emp|
         byebug if emp.nil? or emp["_source"].nil?
         
-        employee_hash = {"employeeInfo":{},"payrollData":[]}
+        employee_hash = {"employeeInfo" => {},"payrollData" => []}
         employee_hash["employeeInfo"] = emp["_source"]
         employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
-          byebug if employee_hash[:payrollData].nil?
-          employee_hash[:payrollData].append(payslips[payslip_id])
+          byebug if employee_hash["payrollData"].nil?
+          employee_hash["payrollData"].append(payslips[payslip_id])
         end
         this_company_hash[:employees].append(employee_hash)
 
@@ -124,7 +125,8 @@ class Scraper
       @@data_hash["company_data"][i] = this_company_hash
       puts "scraped #{this_company_hash["company_name"]} with #{employees.size} employees, #{payslip_count} payslips"
     end
-    byebug
+    file = "#{File.expand_path File.dirname(__FILE__)}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
+    File.write(file,JSON.pretty_generate(@@data_hash))
   end
 
   private
@@ -167,7 +169,7 @@ class Scraper
     # the rest are in ["responses"][1]["hits"]["hits"]
     company_array = []
     for i in 0..(company_count-1)
-      company_hash = {"company_info":{},"company_name":"","employees":[]}
+      company_hash = {"company_info"=> {},"company_name"=> "","employees":[]}
       company_hash["company_info"] = i < 1 ? response[0]["hits"]["hits"][0]["_source"] : response[1]["hits"]["hits"][i-1]["_source"]
       company_hash["company_name"] = company_hash["company_info"]["company_name_text"]
       company_array.append(company_hash)
