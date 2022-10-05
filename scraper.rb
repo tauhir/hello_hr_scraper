@@ -117,7 +117,7 @@ class Scraper
         employee_hash["employeeInfo"] = emp["_source"]
         employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
           byebug if employee_hash["payrollData"].nil?
-          employee_hash["payrollData"].append(payslips[payslip_id])
+          employee_hash["payrollData"].append(payslips[payslip_id.split("__")[2]])
         end
         this_company_hash[:employees].append(employee_hash)
 
