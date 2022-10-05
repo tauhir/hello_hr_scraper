@@ -32,7 +32,8 @@
           "value": "1348695171700984260__LOOKUP__1664272257316x854080539290239000",
           "constraint_type": "equals"
         },
-        {
+        {    file = "#{File.expand_path File.dirname(__FILE__)}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
+    File.write(file,JSON.pretty_generate(@@data_hash))
           "key": "user_signed_up",
           "constraint_type": "equals",
           "value": true
