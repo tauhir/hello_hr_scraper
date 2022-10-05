@@ -71,7 +71,7 @@ class Scraper
     # now build the employee payload and get the data for each company
     #sample_employee_payload is for The Good Sauce
 
-#for each company, get the ID, get employee data (magg + msearch) and payroll data (magg + msearch) 
+    #for each company, get the ID, get employee data (magg + msearch) and payroll data (magg + msearch) 
     for i in 0..@@data_hash["config_data"][:company_count]
       
       this_company_hash = @@data_hash["company_data"][i]
@@ -104,21 +104,27 @@ class Scraper
         response = JSON.parse(response.body)["responses"]
         response[0]["hits"]["hits"].each do |payslip|
           payslips[payslip["_id"]] = payslip #changing data to a hash
+        end
       end
 
       # now work with payslips and employees to populate company hash
-      byebug
-    end
-    employees.each do |emp|
-      byebug if emp.nil? or emp["_source"].nil?
-      
-      employee_hash = {"employeeInfo":{},"payrollData":[]}
-      employee_hash["employeeInfo"] = emp["_source"]
-      employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
-        employee_hash["payrollData"].append(payslips[payslip_id])
-      end
 
+      employees.each do |emp|
+        byebug if emp.nil? or emp["_source"].nil?
+        
+        employee_hash = {"employeeInfo":{},"payrollData":[]}
+        employee_hash["employeeInfo"] = emp["_source"]
+        employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
+          byebug if employee_hash[:payrollData].nil?
+          employee_hash[:payrollData].append(payslips[payslip_id])
+        end
+        this_company_hash[:employees].append(employee_hash)
+
+      end
+      @@data_hash["company_data"][i] = this_company_hash
+      puts "scraped #{this_company_hash["company_name"]} with #{employees.size} employees, #{payslip_count} payslips"
     end
+    byebug
   end
 
   private
@@ -483,10 +489,9 @@ class Scraper
 end
   
   
-  # now build the payload and get the company information
-  if ARGV[0] != nil
-    scraper = Scraper.new
-    scraper.scrape_data(ARGV[0])
-  else 
-    puts "try again with file argument"
-  end
+if ARGV[0] != nil
+  scraper = Scraper.new
+  scraper.scrape_data(ARGV[0])
+else 
+  puts "try again with file argument"
+end

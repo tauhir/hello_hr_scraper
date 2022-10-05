@@ -1,0 +1,27 @@
+{
+    "appname": "employee-listing",
+    "app_version": "live",
+    "searches": [
+      {
+        "appname": "employee-listing",
+        "app_version": "live",
+        "type": "custom.payslips",
+        "constraints": [
+          {
+            "key": "company_custom_company",
+            "value": "1348695171700984260__LOOKUP__1664272257316x854080539290239000",
+            "constraint_type": "equals"
+          }
+        ],
+        "sorts_list": [],
+        "from": 0,
+        "n": 10,
+        "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVDp.%el.cmVEa.%el.cmVFa.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVDp.%el.cmVEa.%el.cmVFa\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}",
+        "extra": {
+          "lookup": [
+            "user1_user"
+          ]
+        }
+      }
+    ]
+  }
