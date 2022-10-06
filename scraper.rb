@@ -452,10 +452,12 @@ class Scraper
       "search_path": "{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%ed.bTPel1.%el.cmRsk0.%el.cmTKs0.%el.cmWHE1.%s.0\"}]}"
     }
     paycycle_array.each do |paycycle|
-      this_search = search
+      this_search = search.clone
       this_search[:constraints][0]["value"] = paycycle
+      # puts this_search
       hash[:searches].append(this_search)
     end
+    puts hash
     encrypt_payload('employee-listing',hash)
   end
 
