@@ -125,12 +125,7 @@ class Scraper
       # now get paycycle info
       payload = build_paycycle_payload(this_company_hash["company_info"]["paycycles_list_custom_paycycle"])
       response = main_conn.post('post',payload.to_json)
-      response = JSON.parse(response.body)["responses"]
-      byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
-      #TODO:
-      #this is response for paycycle for dunder so payload is bad
-      # [{"hits"=>{"total"=>0, "hits"=>[]}, "at_end"=>true, "search_version"=>1665001253737, "extras"=>[]}, {"hits"=>{"total"=>0, "hits"=>[]}, "at_end"=>true, "search_version"=>1665001253744, "extras"=>[]}]
-      
+      response = JSON.parse(response.body)["responses"]      
       
       # sometimes the data is in a second array (I think if the user has more than a years worth of payroll? )
       paycycles = response[0]["hits"]["hits"].empty? ? response[1]["hits"]["hits"] : response[0]["hits"]["hits"] 
@@ -335,19 +330,55 @@ class Scraper
       "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
     }
     final_hash = []
-    this_hash = company_hash.clone
+    this_hash = {
+      "appname"=>"employee-listing",
+      "app_version"=>"live",
+      "type"=>"custom.company",
+      "constraints"=>[{
+          "key"=>"account_custom_account",
+          "value"=>user_id,
+          "constraint_type"=>"equals"}],
+      "sorts_list"=>[],
+      "from"=>0,
+      "n"=>1,
+      "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    }
     this_hash["from"] = company_count-1
     this_hash["n"] = 1
     final_hash.append(this_hash)
 
     if company_count > 1
-      this_hash = company_hash.clone
+      this_hash = {
+        "appname"=>"employee-listing",
+        "app_version"=>"live",
+        "type"=>"custom.company",
+        "constraints"=>[{
+            "key"=>"account_custom_account",
+            "value"=>user_id,
+            "constraint_type"=>"equals"}],
+        "sorts_list"=>[],
+        "from"=>0,
+        "n"=>1,
+        "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+      }
       this_hash["from"] = 0
       this_hash["n"] = company_count-1
       final_hash.append(this_hash) 
     end
 
-    this_hash = company_hash.clone
+    this_hash = {
+      "appname"=>"employee-listing",
+      "app_version"=>"live",
+      "type"=>"custom.company",
+      "constraints"=>[{
+          "key"=>"account_custom_account",
+          "value"=>user_id,
+          "constraint_type"=>"equals"}],
+      "sorts_list"=>[],
+      "from"=>0,
+      "n"=>1,
+      "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTIiq1.%el.bTJkq.%el.bTOPR0.%el.bTQjf\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    }
     this_hash["from"] = company_count > 1 ? company_count : 0
     this_hash["n"] = 10-company_count
     final_hash.append(this_hash)
@@ -435,29 +466,32 @@ class Scraper
     account = @@data_hash["config_data"][:account_id]
     user = @@data_hash["config_data"][:user_id]
     user_id = user.split("__")[0]
-    search = {
-      "appname": "employee-listing",
-      "app_version": "live",
-      "type": "custom.payroll",
-      "constraints": [
-        {
-          "key": "paycycle_custom_paycycle",
-          "value": "",
-          "constraint_type": "equals"
-        }
-      ],
-      "sorts_list": [],
-      "from": 0,
-      "n": 10,
-      "search_path": "{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%ed.bTPel1.%el.cmRsk0.%el.cmTKs0.%el.cmWHE1.%s.0\"}]}"
-    }
+
+    search_array = []
     paycycle_array.each do |paycycle|
-      this_search = search.clone
+      this_search = {
+        "appname": "employee-listing",
+        "app_version": "live",
+        "type": "custom.payroll",
+        "constraints": [
+          {
+            "key": "paycycle_custom_paycycle",
+            "value": "",
+            "constraint_type": "equals"
+          }
+        ],
+        "sorts_list": [],
+        "from": 0,
+        "n": 10,
+        "search_path": "{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%ed.bTPel1.%el.cmRsk0.%el.cmTKs0.%el.cmWHE1.%s.0\"}]}"
+      }
       this_search[:constraints][0]["value"] = paycycle
       # puts this_search
-      hash[:searches].append(this_search)
+      search_array.append(this_search)
+      # byebug if paycycle_array == ["1348695171700984260__LOOKUP__1663329641249x798169525388523500", "1348695171700984260__LOOKUP__1664995202603x316071105354268700"]
     end
-    puts hash
+    
+    hash[:searches] = search_array
     encrypt_payload('employee-listing',hash)
   end
 
