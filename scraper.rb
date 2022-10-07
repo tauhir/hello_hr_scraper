@@ -2,6 +2,9 @@ require 'faraday'
 require 'faraday/retry'
 require 'byebug'
 require 'securerandom'
+require 'rubygems'
+require 'zip'
+
 # get cookie txt file from user
 # convert to hash which can be used in faraday
 # do initialisation url to get user id
@@ -134,8 +137,22 @@ class Scraper
       @@data_hash["company_data"][i] = this_company_hash
       puts "scraped #{this_company_hash["company_name"]} with #{employees.size} employees, #{payslip_count} payslips"
     end
-    file = "#{File.expand_path File.dirname(__FILE__)}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
+    folder = File.expand_path File.dirname(__FILE__)
+    filename = "hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
+    file = "#{folder}/#{filename}"
     File.write(file,JSON.pretty_generate(@@data_hash))
+    input_filenames = [filename]
+
+   
+    zipfile_name = "#{folder}/archive.zip"
+    Zip::File.open(zipfile_name, create: true) do |zipfile|
+      input_filenames.each do |filename|
+        # Two arguments:
+        # - The name of the file as it will appear in the archive
+        # - The original file, including the path to find it
+        zipfile.add(filename, File.join(folder, filename))
+      end
+    end
   end
 
   private
