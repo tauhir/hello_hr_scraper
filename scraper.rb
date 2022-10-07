@@ -44,7 +44,8 @@ class Scraper
      'sec-ch-ua-platform': '"Windows"',
     }
     context = "employee-listing"
-    
+    folder = File.expand_path File.dirname(__FILE__)
+    input_filenames = []
     # import file
     cookies = File.readlines("/home/tauhir/hello_hr/hellohr.co.za_cookies.txt",chomp: true).map {|line| line.split("\t")}
     cookies = cookies.slice(4,cookies.size-4) #ignore first 4 lines
@@ -135,23 +136,35 @@ class Scraper
       this_company_hash["paycycles"] = response[0]["hits"]["hits"]
 
       @@data_hash["company_data"][i] = this_company_hash
+
+      # create json file
+      filename = "#{this_company_hash["company_name"]}.json"
+      file = "#{folder}/#{filename}"
+      File.write(file,JSON.pretty_generate(this_company_hash))
+      input_filenames.append(filename)
+
       puts "scraped #{this_company_hash["company_name"]} with #{employees.size} employees, #{payslip_count} payslips"
     end
-    folder = File.expand_path File.dirname(__FILE__)
-    filename = "hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
-    file = "#{folder}/#{filename}"
-    File.write(file,JSON.pretty_generate(@@data_hash))
-    input_filenames = [filename]
+    #filename = "hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
+    #file = "#{folder}/#{filename}"
+    #File.write(file,JSON.pretty_generate(@@data_hash))
+    #input_filenames.append(filename)
 
-   
-    zipfile_name = "#{folder}/archive.zip"
+
+    zipfile_name = "#{folder}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.zip"
     Zip::File.open(zipfile_name, create: true) do |zipfile|
       input_filenames.each do |filename|
         # Two arguments:
         # - The name of the file as it will appear in the archive
         # - The original file, including the path to find it
+
         zipfile.add(filename, File.join(folder, filename))
+        #File.delete(File.join(folder, filename))
       end
+    end
+    input_filenames.each do |filename|
+      byebug
+      File.delete(File.join(folder, filename))
     end
   end
 
