@@ -163,7 +163,6 @@ class Scraper
       end
     end
     input_filenames.each do |filename|
-      byebug
       File.delete(File.join(folder, filename))
     end
   end
