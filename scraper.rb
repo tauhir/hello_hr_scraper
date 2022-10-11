@@ -100,8 +100,11 @@ class Scraper
         end
       end
       #now search for payslips
+      #picked up a bug when there are more than 30 payslips in a company - there are multiple requests - searching for payslips in 10s
       payslips = {}
       if payslip_count > 0
+        
+
         payslip_count = payslip_count*1
         build_payslip_payload(id,payslip_count)
         payload = build_payslip_payload(id,payslip_count)
@@ -110,6 +113,7 @@ class Scraper
         response[0]["hits"]["hits"].each do |payslip|
           payslips[payslip["_id"]] = payslip #changing data to a hash
         end
+        # byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
       end
 
       # now work with payslips and employees to populate company hash
@@ -119,13 +123,17 @@ class Scraper
         
         employee_hash = {"employeeInfo" => {},"payrollData" => []}
         employee_hash["employeeInfo"] = emp["_source"]
-        employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
-          byebug if employee_hash["payrollData"].nil?
-          employee_hash["payrollData"].append(payslips[payslip_id.split("__")[2]])
+        if !employee_hash["employeeInfo"]["payslips_list_custom_payslips"].nil?
+          employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
+            byebug if employee_hash["payrollData"].nil?
+            
+            employee_hash["payrollData"].append(payslips[payslip_id.split("__")[2]])
+          end
         end
+
         this_company_hash[:employees].append(employee_hash)
       end
-      
+      byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
       # now get paycycle info
       payload = build_paycycle_payload(this_company_hash["company_info"]["paycycles_list_custom_paycycle"])
       response = main_conn.post('post',payload.to_json)
@@ -162,9 +170,10 @@ class Scraper
         #File.delete(File.join(folder, filename))
       end
     end
-    input_filenames.each do |filename|
-      File.delete(File.join(folder, filename))
-    end
+    # byebug
+    # input_filenames.each do |filename|
+    #   File.delete(File.join(folder, filename))
+    # end
   end
 
   private
@@ -560,8 +569,8 @@ class Scraper
     if hash[:searches][0][:constraints][0][:key] == "company_custom_company"
       # value takes the format of "{{user_id}}__LOOKUP__{{company_id}} e.g"1348695171700984260__LOOKUP__1664272257316x854080539290239000"
       hash[:searches][0][:constraints][0][:value] = "#{user_id}__LOOKUP__#{id}"
-      hash[:searches][0]["from"] = payslips_count < 10 ? 0 : (payslips_count/10.0).ceil*10 
-      hash[:searches][0]["n"] = (payslips_count/10.0).ceil*10 #rounding up to nearest 10, see "n" in decrypted payslip payloads
+      hash[:searches][0]["n"] = payslips_count < 10 ? 10 : (payslips_count/10.0).floor*10 
+      hash[:searches][0]["from"] = (payslips_count/10.0).floor*10 #rounding up to nearest 10, see "n" in decrypted payslip payloads
 
     else
       puts "building employee payload failed"
