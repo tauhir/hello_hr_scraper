@@ -103,14 +103,17 @@ class Scraper
       #picked up a bug when there are more than 30 payslips in a company - there are multiple requests - searching for payslips in 10s
       payslips = {}
       if payslip_count > 0
-        
-
-        payslip_count = payslip_count*1
-        build_payslip_payload(id,payslip_count)
-        payload = build_payslip_payload(id,payslip_count)
-        response = main_conn.post('post',payload.to_json) # this works
-        response = JSON.parse(response.body)["responses"]
-        response[0]["hits"]["hits"].each do |payslip|
+        this_payslip_count = payslip_count*1
+        #due to bug above, will need to send multiple payslip searches and consolidate
+        response_array = []
+        while this_payslip_count > 0 
+          payload = build_payslip_payload(id,this_payslip_count)
+          response = main_conn.post('post',payload.to_json)
+          response = JSON.parse(response.body)["responses"][0]["hits"]["hits"]
+          response_array = response_array + response
+          this_payslip_count = this_payslip_count - 10
+        end
+        response_array.each do |payslip|
           payslips[payslip["_id"]] = payslip #changing data to a hash
         end
         # byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
@@ -133,7 +136,7 @@ class Scraper
 
         this_company_hash[:employees].append(employee_hash)
       end
-      byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
+      # byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
       # now get paycycle info
       payload = build_paycycle_payload(this_company_hash["company_info"]["paycycles_list_custom_paycycle"])
       response = main_conn.post('post',payload.to_json)
@@ -153,10 +156,10 @@ class Scraper
 
       puts "scraped #{this_company_hash["company_name"]} with #{employees.size} employees, #{payslip_count} payslips"
     end
-    #filename = "hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
-    #file = "#{folder}/#{filename}"
-    #File.write(file,JSON.pretty_generate(@@data_hash))
-    #input_filenames.append(filename)
+    filename = "hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
+    file = "#{folder}/#{filename}"
+    File.write(file,JSON.pretty_generate(@@data_hash))
+    input_filenames.append(filename)
 
 
     zipfile_name = "#{folder}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.zip"
