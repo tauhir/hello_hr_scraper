@@ -1,0 +1,18 @@
+{
+    "appname": "employee-listing",
+    "app_version": "live",
+    "type": "custom.payroll",
+    "constraints": [{
+        "key": "company_custom_company",
+        "value": "1348695171700984260__LOOKUP__1663329640319x300816591957919550",
+        "constraint_type": "equals"
+    }, {
+        "key": "paycycle_type_option_payroll_types",
+        "value": "monthly",
+        "constraint_type": "equals"
+    }],
+    "sorts_list": [],
+    "from": 10,
+    "n": 999999999990,
+    "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVCr.%el.cmVCs.%el.cmVDc.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVCr.%el.cmVCs.%el.cmVDc\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+}

@@ -54,7 +54,7 @@ class Scraper
     cookies.delete('_fw_crm_v') # these two cookies cause issues, they're not included in the requests
     cookies = cookies.map {|h| h.join '=' }.join(';')
     cook = "_ga=GA1.1.496444998.1664184067; _hjSessionUser_1859309=eyJpZCI6ImU2MTlhMjRmLWU3NTMtNTk2OC1hMWE2LTdhMjMyN2Y0NGIzMyIsImNyZWF0ZWQiOjE2NjQxODQwNjY4MjcsImV4aXN0aW5nIjp0cnVlfQ==; joe-chnlcustid=0320c6fd-7d0a-41ef-8fe3-046584519e75; spd-custhash=a102eefe89e5cbc79f12098685795739a3bab1eb; employee-listing_live_u2main=1664780285681x371563801862858200; employee-listing_live_u2main.sig=1rRws_IUeSmOwkPmAA3QJUJ22Aw; employee-listing_u1main=1663326026672x619453597084089700; _hjIncludedInSessionSample=0; _hjSession_1859309=eyJpZCI6IjBkMzkzMTk0LTA3Y2QtNDkxOC1hOWRmLTBkZDBjYWNlYmZhZCIsImNyZWF0ZWQiOjE2NjQ3OTc2NzkzODYsImluU2FtcGxlIjpmYWxzZX0=; _hjIncludedInPageviewSample=1; _hjAbsoluteSessionInProgress=1; _ga_BH21BD7T9L=GS1.1.1664797677.37.1.1664797910.0.0.0"
-    # byebug
+    byebug
     extra_headers['Cookie'] = cookies
     # use the init url to get the user_id used as a key in the payloads
     init_url = "https://app.hellohr.co.za/api/1.1/init/data?location=https%3A%2F%2Fapp.hellohr.co.za%2F"
@@ -168,13 +168,56 @@ class Scraper
       this_company_hash["leaveRequests"] = response_array
 
       #now get leave policies
-
+      policies_array = []
+      payload = build_leave_policy_payload(id)
+      response = main_conn.post('post',payload.to_json)
+      response = JSON.parse(response.body)["responses"]  
+      
+      next if response[0]["hits"]["hits"].empty?
+      response.each do |resp|
+        resp["hits"]["hits"].each do |request|
+          response_array.append(request) if request["_type"] = "custom.leave_request"
+        end
+      end
+      this_company_hash["leavePolicies"] = response_array
       
 
       #now get payruns
+      search_conn = Faraday.new(
+        url: 'https://app.hellohr.co.za/elasticsearch/search',
+        headers: extra_headers
+      )
+      payrun_array = []
+      types = ["monthly","weekly","bi-weekly"]
+      types.each do |freq|
+        payload = build_payrun_payload(id,freq)
+        response = search_conn.post('post',payload.to_json)
+        response = JSON.parse(response.body)["hits"]["hits"]
+        next if response.empty?
+
+        response.each do |resp|
+          next if resp.empty?
+          byebug if resp.kind_of?(Array)
+          payrun_array.append(resp) if resp["_type"] == "custom.payroll"
+        end
+      end
+      this_company_hash["payRuns"] = payrun_array
+      
 
       #now get custom items
+      custom_items = this_company_hash["company_info"]["custom_incomes_list_custom_custom_income"]
+      custom_items_array = []
+      unless custom_items.nil?
+        #get custom items
+        payload = build_custom_item_payload(ids)
+        get_conn = Faraday.new(url: 'https://app.hellohr.co.za/elasticsearch/mget', headers: extra_headers)
+        response = get_conn.post('post',payload.to_json)
+        custom_items_array = JSON.parse(response.body)["docs"]
+      end
+      this_company_hash["customItems"] = custom_items_array
 
+
+      #add to main hash
       @@data_hash["company_data"][i] = this_company_hash
 
       # create json file
@@ -620,6 +663,62 @@ class Scraper
     encrypt_payload('employee-listing',hash)
   end  
 
+  def build_leave_policy_payload(id)
+    hash = {"appname"=>"employee-listing", "app_version"=>"live", "searches"=>[{"appname"=>"employee-listing", "app_version"=>"live", "type"=>"custom.leave_policy", "constraints"=>[{"key"=>"company_custom_company", "value"=>"1348695171700984260__LOOKUP__1663329640319x300816591957919550", "constraint_type"=>"equals"}], "sorts_list"=>[], "from"=>0, "n"=>10, "search_path"=>"{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTONA0.%el.bTRMn0.%el.bTRMo0.%el.bTOoF0.%el.bTOxq.%s.bTOxh\"}]}"}]}
+    account = @@data_hash["config_data"][:account_id]
+    user = @@data_hash["config_data"][:user_id]
+    user_id = user.split("__")[0]
+    # to do still
+    
+    if hash["searches"][0]["constraints"][0]["key"] == "company_custom_company"
+      # value takes the format of "{{user_id}}__LOOKUP__{{company_id}} e.g"1348695171700984260__LOOKUP__1664272257316x854080539290239000"
+      hash["searches"][0]["constraints"][0]["value"] = "#{user_id}__LOOKUP__#{id}"
+    else
+      puts "building employee payload failed"
+      byebug
+    end
+    encrypt_payload('employee-listing',hash)
+  end
+
+  def build_payrun_payload(id,type)
+   hash = {
+        "appname": "employee-listing",
+        "app_version": "live",
+        "type": "custom.payroll",
+        "constraints": [{
+            "key": "company_custom_company",
+            "value": "1348695171700984260__LOOKUP__1663328287094x260654907396456450",
+            "constraint_type": "equals"
+        }, {
+            "key": "paycycle_type_option_payroll_types",
+            "value": "monthly",
+            "constraint_type": "equals"
+        }],
+        "sorts_list": [],
+        "from": 0,
+        "n": 999999999990,
+        "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVCr.%el.cmVCs.%el.cmVDc.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.cmVCr.%el.cmVCs.%el.cmVDc\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    }
+    account = @@data_hash["config_data"][:account_id]
+    user = @@data_hash["config_data"][:user_id]
+    user_id = user.split("__")[0]
+    hash[:constraints][0][:value] = "#{user_id}__LOOKUP__#{id}"
+    hash[:constraints][1][:value] = type
+
+    encrypt_payload('employee-listing',hash)
+  end
+
+  def build_custom_item_payload(ids)
+    hash = {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "ids": []
+    }
+
+     hash[:ids] = ids
+ 
+     encrypt_payload('employee-listing',hash)
+   end
   def decrypt_payload(context, x, y, z)
     decrypt = ->(e, t, r, data) {
       cipher = OpenSSL::Cipher.new('AES-256-CBC')

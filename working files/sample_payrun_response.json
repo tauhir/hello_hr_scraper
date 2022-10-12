@@ -1,0 +1,80 @@
+{
+  "appname": "employee-listing",
+  "app_version": "live",
+  "searches": [
+    {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "type": "custom.payroll",
+      "constraints": [
+        {
+          "key": "paycycle_custom_paycycle",
+          "value": "1348695171700984260__LOOKUP__1664995202603x316071105354268700",
+          "constraint_type": "equals"
+        }
+      ],
+      "sorts_list": [],
+      "from": 0,
+      "n": 10,
+      "search_path": "{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.bTOWb.%el.cmUrY0.%el.cmUwc0.%el.cmUwh0.%s.0\"}]}"
+    },
+    {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "type": "custom.payroll",
+      "constraints": [
+        {
+          "key": "paycycle_custom_paycycle",
+          "value": "1348695171700984260__LOOKUP__1663329641249x798169525388523500",
+          "constraint_type": "equals"
+        }
+      ],
+      "sorts_list": [],
+      "from": 0,
+      "n": 10,
+      "search_path": "{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.bTOWb.%el.cmUrY0.%el.cmUwc0.%el.cmUwh0.%s.0\"}]}"
+    },
+    {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "type": "custom.payroll",
+      "constraints": [
+        {
+          "key": "paycycle_custom_paycycle",
+          "value": "1348695171700984260__LOOKUP__1664995202603x316071105354268700",
+          "constraint_type": "equals"
+        }
+      ],
+      "sorts_list": [
+        {
+          "sort_field": "date_end_date",
+          "descending": true
+        }
+      ],
+      "from": 0,
+      "n": 2,
+      "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.bTOWb.%el.cmUrY0.%el.cmUwc0.%el.cmUwh0.%el.cmUwi0.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.bTOWb.%el.cmUrY0.%el.cmUwc0.%el.cmUwh0.%el.cmUwi0\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    },
+    {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "type": "custom.payroll",
+      "constraints": [
+        {
+          "key": "paycycle_custom_paycycle",
+          "value": "1348695171700984260__LOOKUP__1663329641249x798169525388523500",
+          "constraint_type": "equals"
+        }
+      ],
+      "sorts_list": [
+        {
+          "sort_field": "date_end_date",
+          "descending": true
+        }
+      ],
+      "from": 0,
+      "n": 2,
+      "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.bTOWb.%el.cmUrY0.%el.cmUwc0.%el.cmUwh0.%el.cmUwi0.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTOWJ.%el.bTJkq.%el.bTOWb.%el.cmUrY0.%el.cmUwc0.%el.cmUwh0.%el.cmUwi0\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+    }
+  ]
+}
