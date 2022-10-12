@@ -54,7 +54,7 @@ class Scraper
     cookies.delete('_fw_crm_v') # these two cookies cause issues, they're not included in the requests
     cookies = cookies.map {|h| h.join '=' }.join(';')
     cook = "_ga=GA1.1.496444998.1664184067; _hjSessionUser_1859309=eyJpZCI6ImU2MTlhMjRmLWU3NTMtNTk2OC1hMWE2LTdhMjMyN2Y0NGIzMyIsImNyZWF0ZWQiOjE2NjQxODQwNjY4MjcsImV4aXN0aW5nIjp0cnVlfQ==; joe-chnlcustid=0320c6fd-7d0a-41ef-8fe3-046584519e75; spd-custhash=a102eefe89e5cbc79f12098685795739a3bab1eb; employee-listing_live_u2main=1664780285681x371563801862858200; employee-listing_live_u2main.sig=1rRws_IUeSmOwkPmAA3QJUJ22Aw; employee-listing_u1main=1663326026672x619453597084089700; _hjIncludedInSessionSample=0; _hjSession_1859309=eyJpZCI6IjBkMzkzMTk0LTA3Y2QtNDkxOC1hOWRmLTBkZDBjYWNlYmZhZCIsImNyZWF0ZWQiOjE2NjQ3OTc2NzkzODYsImluU2FtcGxlIjpmYWxzZX0=; _hjIncludedInPageviewSample=1; _hjAbsoluteSessionInProgress=1; _ga_BH21BD7T9L=GS1.1.1664797677.37.1.1664797910.0.0.0"
-    #byebug
+    # byebug
     extra_headers['Cookie'] = cookies
     # use the init url to get the user_id used as a key in the payloads
     init_url = "https://app.hellohr.co.za/api/1.1/init/data?location=https%3A%2F%2Fapp.hellohr.co.za%2F"
@@ -86,7 +86,7 @@ class Scraper
       response = main_conn.post('post',payload.to_json) # this works
       response = JSON.parse(response.body)["responses"]
       employees = response[0]["hits"]["hits"]
-
+      leave_approver_array = []
       #now get payslips
       # can't find the maggregate search to get payslips number but we can use the employee data to
       # get the total payslips in company. 
@@ -126,6 +126,7 @@ class Scraper
         
         employee_hash = {"employeeInfo" => {},"payrollData" => []}
         employee_hash["employeeInfo"] = emp["_source"]
+        leave_approver_array.append(employee_hash["employeeInfo"]["leave_approver_user"]) if !employee_hash["employeeInfo"]["leave_approver_user"].nil?
         if !employee_hash["employeeInfo"]["payslips_list_custom_payslips"].nil?
           employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
             byebug if employee_hash["payrollData"].nil?
@@ -137,6 +138,8 @@ class Scraper
         this_company_hash[:employees].append(employee_hash)
       end
       # byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
+
+
       # now get paycycle info
       payload = build_paycycle_payload(this_company_hash["company_info"]["paycycles_list_custom_paycycle"])
       response = main_conn.post('post',payload.to_json)
@@ -145,6 +148,32 @@ class Scraper
       # sometimes the data is in a second array (I think if the user has more than a years worth of payroll? )
       paycycles = response[0]["hits"]["hits"].empty? ? response[1]["hits"]["hits"] : response[0]["hits"]["hits"] 
       this_company_hash["paycycles"] = response[0]["hits"]["hits"]
+
+
+      #now get leave requests -- we need to get requests by leave_approver_user
+      response_array = []
+      leave_approver_array.each do |leave_approver|
+
+        payload = build_leave_request_payload(leave_approver)
+        response = main_conn.post('post',payload.to_json)
+        response = JSON.parse(response.body)["responses"]  
+        
+        next if response[0]["hits"]["hits"].empty?
+        response.each do |resp|
+          resp["hits"]["hits"].each do |request|
+            response_array.append(request) if request["_type"] = "custom.leave_request"
+          end
+        end
+      end
+      this_company_hash["leaveRequests"] = response_array
+
+      #now get leave policies
+
+      
+
+      #now get payruns
+
+      #now get custom items
 
       @@data_hash["company_data"][i] = this_company_hash
 
@@ -156,10 +185,7 @@ class Scraper
 
       puts "scraped #{this_company_hash["company_name"]} with #{employees.size} employees, #{payslip_count} payslips"
     end
-    filename = "hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.json"
-    file = "#{folder}/#{filename}"
-    File.write(file,JSON.pretty_generate(@@data_hash))
-    input_filenames.append(filename)
+
 
 
     zipfile_name = "#{folder}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.zip"
@@ -170,13 +196,13 @@ class Scraper
         # - The original file, including the path to find it
 
         zipfile.add(filename, File.join(folder, filename))
-        #File.delete(File.join(folder, filename))
+        #File.delete(File.join(folder, filename)) # issues with deletion here for some reason
       end
     end
     # byebug
-    # input_filenames.each do |filename|
-    #   File.delete(File.join(folder, filename))
-    # end
+    input_filenames.each do |filename|
+      File.delete(File.join(folder, filename))
+    end
   end
 
   private
@@ -581,6 +607,18 @@ class Scraper
     end
     encrypt_payload('employee-listing',hash)
   end
+
+  def build_leave_request_payload(leave_approver)
+    #missing company information here
+    hash = {"appname"=>"employee-listing", "app_version"=>"live", "searches"=>[{"appname"=>"employee-listing", "app_version"=>"live", "type"=>"custom.leave_request", "constraints"=>[{"key"=>"responded_by_user", "value"=>"1348695171700984260__LOOKUP__1663326026672x619453597084089700", "constraint_type"=>"equals"}], "sorts_list"=>[], "from"=>0, "n"=>10, "search_path"=>"{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTONA0.%el.bTRMn0.%el.bTRMo0.%el.bTOnz0.%el.bTOxO.%s.cmOEU1\"}]}"}, {"appname"=>"employee-listing", "app_version"=>"live", "type"=>"custom.leave_request", "constraints"=>[{"key"=>"awaiting_review_boolean", "value"=>false, "constraint_type"=>"equals"}, {"key"=>"responded_by_user", "value"=>"1348695171700984260__LOOKUP__1663326026672x619453597084089700", "constraint_type"=>"equals"}], "sorts_list"=>[], "from"=>0, "n"=>10, "search_path"=>"{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTONA0.%el.bTRMn0.%el.bTRMo0.%el.bTOnz0.%el.cmRHt.%s.cmOET1\"}]}"}, {"appname"=>"employee-listing", "app_version"=>"live", "type"=>"custom.leave_request", "constraints"=>[{"key"=>"awaiting_review_boolean", "value"=>true, "constraint_type"=>"equals"}, {"key"=>"responded_by_user", "value"=>"1348695171700984260__LOOKUP__1663326026672x619453597084089700", "constraint_type"=>"equals"}], "sorts_list"=>[], "from"=>0, "n"=>10, "search_path"=>"{\"constructor_name\":\"State\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTONA0.%el.bTRMn0.%el.bTRMo0.%el.bTOnz0.%el.cmRHu.%s.cmOEZ1\"}]}"}, {"appname"=>"employee-listing", "app_version"=>"live", "type"=>"custom.leave_request", "constraints"=>[{"key"=>"awaiting_review_boolean", "value"=>false, "constraint_type"=>"equals"}, {"key"=>"responded_by_user", "value"=>"1348695171700984260__LOOKUP__1663326026672x619453597084089700", "constraint_type"=>"equals"}], "sorts_list"=>[{"sort_field"=>"Modified Date", "descending"=>true}], "from"=>0, "n"=>5, "search_path"=>"{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTONA0.%el.bTRMn0.%el.bTRMo0.%el.bTOnz0.%el.cmRHt.%el.cmOEI1.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTONA0.%el.bTRMn0.%el.bTRMo0.%el.bTOnz0.%el.cmRHt.%el.cmOEI1\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}", "extra"=>{"lookup"=>["user_user"]}}]}
+    user = leave_approver
+    user_id = user.split("__")[0]
+    hash["searches"][0]["constraints"][0]["value"] = user
+    hash["searches"][1]["constraints"][1]["value"] = user
+    hash["searches"][2]["constraints"][1]["value"] = user
+    hash["searches"][3]["constraints"][1]["value"] = user
+    encrypt_payload('employee-listing',hash)
+  end  
 
   def decrypt_payload(context, x, y, z)
     decrypt = ->(e, t, r, data) {
