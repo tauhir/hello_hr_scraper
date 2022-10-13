@@ -17,7 +17,7 @@ require 'zip'
 
 class Scraper
   @@data_hash = {}
-  def scrape_data(filename)
+  def scrape_data(cookie_filename)
 
     extra_headers = {
       'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -47,14 +47,17 @@ class Scraper
     folder = File.expand_path File.dirname(__FILE__)
     input_filenames = []
     # import file
-    cookies = File.readlines("/home/tauhir/hello_hr/hellohr.co.za_cookies.txt",chomp: true).map {|line| line.split("\t")}
+    cookies = File.readlines("#{folder}/#{cookie_filename}",chomp: true).map {|line| line.split("\t")}
     cookies = cookies.slice(4,cookies.size-4) #ignore first 4 lines
     cookies = cookies.map {|line| line.slice(5,2)}.to_h
-    cookies.delete('first_session')
-    cookies.delete('_fw_crm_v') # these two cookies cause issues, they're not included in the requests
+    allowed_cookies = ["_ga", "_hjSessionUser_1859309", "joe-chnlcustid", "spd-custhash", "employee-listing_live_u2main", "employee-listing_live_u2main.sig", "employee-listing_u1main", "_hjSession_1859309", "_hjAbsoluteSessionInProgress", "_ga_BH21BD7T9L", "_hjIncludedInPageviewSample", "_hjIncludedInSessionSample"]
+    
+    (allowed_cookies - cookies.keys) | (cookies.keys - allowed_cookies).each do |cookie| 
+      cookies.delete(cookie)
+    end
     cookies = cookies.map {|h| h.join '=' }.join(';')
     # cook = "_ga=GA1.1.496444998.1664184067; _hjSessionUser_1859309=eyJpZCI6ImU2MTlhMjRmLWU3NTMtNTk2OC1hMWE2LTdhMjMyN2Y0NGIzMyIsImNyZWF0ZWQiOjE2NjQxODQwNjY4MjcsImV4aXN0aW5nIjp0cnVlfQ==; joe-chnlcustid=0320c6fd-7d0a-41ef-8fe3-046584519e75; spd-custhash=a102eefe89e5cbc79f12098685795739a3bab1eb; employee-listing_live_u2main=1664780285681x371563801862858200; employee-listing_live_u2main.sig=1rRws_IUeSmOwkPmAA3QJUJ22Aw; employee-listing_u1main=1663326026672x619453597084089700; _hjIncludedInSessionSample=0; _hjSession_1859309=eyJpZCI6IjBkMzkzMTk0LTA3Y2QtNDkxOC1hOWRmLTBkZDBjYWNlYmZhZCIsImNyZWF0ZWQiOjE2NjQ3OTc2NzkzODYsImluU2FtcGxlIjpmYWxzZX0=; _hjIncludedInPageviewSample=1; _hjAbsoluteSessionInProgress=1; _ga_BH21BD7T9L=GS1.1.1664797677.37.1.1664797910.0.0.0"
-    # byebug
+
     extra_headers['Cookie'] = cookies
     # use the init url to get the user_id used as a key in the payloads
     init_url = "https://app.hellohr.co.za/api/1.1/init/data?location=https%3A%2F%2Fapp.hellohr.co.za%2F"
@@ -62,6 +65,7 @@ class Scraper
       req.headers['Cookie'] = cookies
     end
     response_data = JSON.parse(resp.body)[0]
+    raise "issue with cookies" if response_data.nil?
     account_id = response_data["data"]["account_custom_account"]
     user_id = response_data["data"]["Created By"] #concern is that this could be a different user but we hope not or we hope they don't care
     # now we need to check how many companies there are with an maggregate search
@@ -119,14 +123,20 @@ class Scraper
         employee_hash = {"employeeInfo" => {},"payrollData" => []}
         byebug if emp.nil? or emp["_source"].nil?
         payslips = emp["_source"]["payslips_list_custom_payslips"]
-        
+        payslip_count += payslips.size unless payslips.nil?
         unless payslips.nil?
           payslips = payslips.map{|payslip| payslip.split("__")[2]}
           employee_hash["payrollData"] = do_mget_request(payslips,get_conn)
 
           #get custom deductions
-          deductions = employee_hash["payrollData"].map{|payslip| payslip["_source"]["deductions_list_custom_deduction"].flatten}
-          deductions_array = deductions_array + deductions unless deductions.nil?
+          deductions = employee_hash["payrollData"].map do |payslip| 
+            unless payslip.nil? || payslip["_source"].nil? ||payslip["_source"]["deductions_list_custom_deduction"].nil?
+              payslip["_source"]["deductions_list_custom_deduction"].flatten
+            else
+              nil
+            end
+          end
+          deductions_array = deductions_array + deductions.compact unless deductions.nil?
         end
         employee_hash["employeeInfo"] = emp["_source"]
         this_company_hash[:employees].append(employee_hash)
@@ -220,6 +230,7 @@ class Scraper
 
       # create json file
       filename = "#{this_company_hash["company_name"]}.json"
+      filename = "#{i}-" + filename
       file = "#{folder}/#{filename}"
       File.write(file,JSON.pretty_generate(this_company_hash))
       input_filenames.append(filename)
@@ -231,11 +242,11 @@ class Scraper
 
     zipfile_name = "#{folder}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H-%M-%S'}.zip"
     Zip::File.open(zipfile_name, create: true) do |zipfile|
-      input_filenames.each do |filename|
+      input_filenames.each_with_index  do |filename,index|
         # Two arguments:
         # - The name of the file as it will appear in the archive
         # - The original file, including the path to find it
-
+        
         zipfile.add(filename, File.join(folder, filename))
         #File.delete(File.join(folder, filename)) # issues with deletion here for some reason
       end
@@ -766,6 +777,12 @@ class Scraper
     payload = build_mget_payload(ids)
     response = connection.post('post',payload.to_json)
     JSON.parse(response.body)["docs"]
+  end
+
+  def do_msearch_request(payload,connection)
+    response = main_conn.post('post',payload.to_json)
+    response = JSON.parse(response.body)["responses"]
+    response[0]["hits"]["hits"]
   end
   
   def build_dismissed_payload(id,employee_count)
