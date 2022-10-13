@@ -102,9 +102,8 @@ class Scraper
         termination_data.each do |emp|
           terminated_employee_ids.append(emp["_source"]["user_user"].split("__")[2])
         end
-        payload = build_mget_payload(terminated_employee_ids)
-        response = get_conn.post('post',payload.to_json)
-        terminated_employees = JSON.parse(response.body)["docs"]
+        terminated_employees = do_mget_request(terminated_employee_ids,get_conn)
+        
       end
       this_company_hash["terminationData"] = termination_data
       employees = employees + terminated_employees
@@ -123,11 +122,9 @@ class Scraper
         
         unless payslips.nil?
           payslips = payslips.map{|payslip| payslip.split("__")[2]}
-          payslip_count = payslip_count + payslips.size
-          payload = build_mget_payload(payslips)
-          response = get_conn.post('post',payload.to_json)
-          employee_hash["payrollData"] = JSON.parse(response.body)["docs"]
-          #byebug if emp["_source"]["last_name_text"] == "Majal"
+          employee_hash["payrollData"] = do_mget_request(payslips,get_conn)
+
+          #get custom deductions
           deductions = employee_hash["payrollData"].map{|payslip| payslip["_source"]["deductions_list_custom_deduction"].flatten}
           deductions_array = deductions_array + deductions unless deductions.nil?
         end
@@ -142,9 +139,7 @@ class Scraper
       deductions = []
       unless deductions_array.empty?
         deductions_array = deductions_array.map{|deduc| deduc.split("__")[2]}
-        payload = build_mget_payload(deductions_array)
-        response = get_conn.post('post',payload.to_json)
-        deductions = JSON.parse(response.body)["docs"]
+        deductions = do_mget_request(deductions_array,get_conn)
       end
       this_company_hash["customDeductions"] = deductions
 
@@ -152,13 +147,8 @@ class Scraper
 
 
       # now get paycycle info
-      payload = build_paycycle_payload(this_company_hash["company_info"]["paycycles_list_custom_paycycle"])
-      response = main_conn.post('post',payload.to_json)
-      response = JSON.parse(response.body)["responses"]      
-      
-      # sometimes the data is in a second array (I think if the user has more than a years worth of payroll? )
-      paycycles = response[0]["hits"]["hits"].empty? ? response[1]["hits"]["hits"] : response[0]["hits"]["hits"] 
-      this_company_hash["paycycles"] = response[0]["hits"]["hits"]
+      paycycle_array = this_company_hash["company_info"]["paycycles_list_custom_paycycle"].map{|cycle| cycle.split("__")[2]}
+      this_company_hash["paycycles"] = do_mget_request(paycycle_array,get_conn)
 
 
       #now get leave requests -- we need to get requests by leave_approver_user
@@ -219,11 +209,8 @@ class Scraper
       custom_items = this_company_hash["company_info"]["custom_incomes_list_custom_custom_income"]
       custom_items_array = []
       unless custom_items.nil?
-        #get custom items
         custom_items = custom_items.map {|item| item.split("__")[2]}
-        payload = build_mget_payload(custom_items)
-        response = get_conn.post('post',payload.to_json)
-        custom_items_array = JSON.parse(response.body)["docs"]
+        custom_items_array = do_mget_request(custom_items,get_conn)
       end
       this_company_hash["customItems"] = custom_items_array
 
@@ -775,6 +762,12 @@ class Scraper
    end
 
 
+  def do_mget_request(ids,connection)
+    payload = build_mget_payload(ids)
+    response = connection.post('post',payload.to_json)
+    JSON.parse(response.body)["docs"]
+  end
+  
   def build_dismissed_payload(id,employee_count)
     hash = {
       "appname": "employee-listing",
