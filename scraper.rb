@@ -53,8 +53,8 @@ class Scraper
     cookies.delete('first_session')
     cookies.delete('_fw_crm_v') # these two cookies cause issues, they're not included in the requests
     cookies = cookies.map {|h| h.join '=' }.join(';')
-    cook = "_ga=GA1.1.496444998.1664184067; _hjSessionUser_1859309=eyJpZCI6ImU2MTlhMjRmLWU3NTMtNTk2OC1hMWE2LTdhMjMyN2Y0NGIzMyIsImNyZWF0ZWQiOjE2NjQxODQwNjY4MjcsImV4aXN0aW5nIjp0cnVlfQ==; joe-chnlcustid=0320c6fd-7d0a-41ef-8fe3-046584519e75; spd-custhash=a102eefe89e5cbc79f12098685795739a3bab1eb; employee-listing_live_u2main=1664780285681x371563801862858200; employee-listing_live_u2main.sig=1rRws_IUeSmOwkPmAA3QJUJ22Aw; employee-listing_u1main=1663326026672x619453597084089700; _hjIncludedInSessionSample=0; _hjSession_1859309=eyJpZCI6IjBkMzkzMTk0LTA3Y2QtNDkxOC1hOWRmLTBkZDBjYWNlYmZhZCIsImNyZWF0ZWQiOjE2NjQ3OTc2NzkzODYsImluU2FtcGxlIjpmYWxzZX0=; _hjIncludedInPageviewSample=1; _hjAbsoluteSessionInProgress=1; _ga_BH21BD7T9L=GS1.1.1664797677.37.1.1664797910.0.0.0"
-    byebug
+    # cook = "_ga=GA1.1.496444998.1664184067; _hjSessionUser_1859309=eyJpZCI6ImU2MTlhMjRmLWU3NTMtNTk2OC1hMWE2LTdhMjMyN2Y0NGIzMyIsImNyZWF0ZWQiOjE2NjQxODQwNjY4MjcsImV4aXN0aW5nIjp0cnVlfQ==; joe-chnlcustid=0320c6fd-7d0a-41ef-8fe3-046584519e75; spd-custhash=a102eefe89e5cbc79f12098685795739a3bab1eb; employee-listing_live_u2main=1664780285681x371563801862858200; employee-listing_live_u2main.sig=1rRws_IUeSmOwkPmAA3QJUJ22Aw; employee-listing_u1main=1663326026672x619453597084089700; _hjIncludedInSessionSample=0; _hjSession_1859309=eyJpZCI6IjBkMzkzMTk0LTA3Y2QtNDkxOC1hOWRmLTBkZDBjYWNlYmZhZCIsImNyZWF0ZWQiOjE2NjQ3OTc2NzkzODYsImluU2FtcGxlIjpmYWxzZX0=; _hjIncludedInPageviewSample=1; _hjAbsoluteSessionInProgress=1; _ga_BH21BD7T9L=GS1.1.1664797677.37.1.1664797910.0.0.0"
+    # byebug
     extra_headers['Cookie'] = cookies
     # use the init url to get the user_id used as a key in the payloads
     init_url = "https://app.hellohr.co.za/api/1.1/init/data?location=https%3A%2F%2Fapp.hellohr.co.za%2F"
@@ -70,6 +70,7 @@ class Scraper
     company_count = get_aggregate_companies(extra_headers)
     @@data_hash["config_data"][:company_count] =  company_count
     main_conn = create_main_conn(extra_headers)
+    get_conn = Faraday.new(url: 'https://app.hellohr.co.za/elasticsearch/mget', headers: extra_headers)
     company_data = get_company_data(main_conn, account_id, company_count)
     @@data_hash["company_data"] = company_data
     # now build the employee payload and get the data for each company
@@ -77,66 +78,76 @@ class Scraper
 
     #for each company, get the ID, get employee data (magg + msearch) and payroll data (magg + msearch) 
     for i in 0..(@@data_hash["config_data"][:company_count]-1)
-      
+      leave_approver_array = []
       this_company_hash = @@data_hash["company_data"][i]
       byebug if this_company_hash["company_info"].nil?
       id = this_company_hash["company_info"]["_id"]
       employees_count = get_aggregate_employees(extra_headers, id)
+      terminated_employees_count = get_aggregate_term_employees(extra_headers, id)
       payload = build_employees_payload(id,employees_count)
       response = main_conn.post('post',payload.to_json) # this works
       response = JSON.parse(response.body)["responses"]
       employees = response[0]["hits"]["hits"]
-      leave_approver_array = []
+
+      #get terminated employees
+      termination_data = []
+      terminated_employees = []
+      if terminated_employees_count > 0
+
+        payload = build_dismissed_payload(id,terminated_employees_count)
+        response = main_conn.post('post',payload.to_json) # this works
+        response = JSON.parse(response.body)["responses"]
+        termination_data = response[0]["hits"]["hits"]
+        terminated_employee_ids = []
+        termination_data.each do |emp|
+          terminated_employee_ids.append(emp["_source"]["user_user"].split("__")[2])
+        end
+        payload = build_mget_payload(terminated_employee_ids)
+        response = get_conn.post('post',payload.to_json)
+        terminated_employees = JSON.parse(response.body)["docs"]
+      end
+      this_company_hash["terminationData"] = termination_data
+      employees = employees + terminated_employees
+
       #now get payslips
       # can't find the maggregate search to get payslips number but we can use the employee data to
       # get the total payslips in company. 
 
       payslip_count = 0
+      payslips = {}
+      deductions_array = []
       employees.each do |emp|
+        employee_hash = {"employeeInfo" => {},"payrollData" => []}
         byebug if emp.nil? or emp["_source"].nil?
         payslips = emp["_source"]["payslips_list_custom_payslips"]
-        if !payslips.nil?
-          payslip_count = payslip_count + payslips.size
-        end
-      end
-      #now search for payslips
-      #picked up a bug when there are more than 30 payslips in a company - there are multiple requests - searching for payslips in 10s
-      payslips = {}
-      if payslip_count > 0
-        this_payslip_count = payslip_count*1
-        #due to bug above, will need to send multiple payslip searches and consolidate
-        response_array = []
-        while this_payslip_count > 0 
-          payload = build_payslip_payload(id,this_payslip_count)
-          response = main_conn.post('post',payload.to_json)
-          response = JSON.parse(response.body)["responses"][0]["hits"]["hits"]
-          response_array = response_array + response
-          this_payslip_count = this_payslip_count - 10
-        end
-        response_array.each do |payslip|
-          payslips[payslip["_id"]] = payslip #changing data to a hash
-        end
-        # byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
-      end
-
-      # now work with payslips and employees to populate company hash
-
-      employees.each do |emp|
-        byebug if emp.nil? or emp["_source"].nil?
         
-        employee_hash = {"employeeInfo" => {},"payrollData" => []}
-        employee_hash["employeeInfo"] = emp["_source"]
-        leave_approver_array.append(employee_hash["employeeInfo"]["leave_approver_user"]) if !employee_hash["employeeInfo"]["leave_approver_user"].nil?
-        if !employee_hash["employeeInfo"]["payslips_list_custom_payslips"].nil?
-          employee_hash["employeeInfo"]["payslips_list_custom_payslips"].each do |payslip_id|
-            byebug if employee_hash["payrollData"].nil?
-            
-            employee_hash["payrollData"].append(payslips[payslip_id.split("__")[2]])
-          end
+        unless payslips.nil?
+          payslips = payslips.map{|payslip| payslip.split("__")[2]}
+          payslip_count = payslip_count + payslips.size
+          payload = build_mget_payload(payslips)
+          response = get_conn.post('post',payload.to_json)
+          employee_hash["payrollData"] = JSON.parse(response.body)["docs"]
+          #byebug if emp["_source"]["last_name_text"] == "Majal"
+          deductions = employee_hash["payrollData"].map{|payslip| payslip["_source"]["deductions_list_custom_deduction"].flatten}
+          deductions_array = deductions_array + deductions unless deductions.nil?
         end
-
+        employee_hash["employeeInfo"] = emp["_source"]
         this_company_hash[:employees].append(employee_hash)
+        leave_approver_array.append(employee_hash["employeeInfo"]["leave_approver_user"]) if !employee_hash["employeeInfo"]["leave_approver_user"].nil?
       end
+      
+
+      #now get custom deductions
+      deductions_array = deductions_array.compact.compact.flatten
+      deductions = []
+      unless deductions_array.empty?
+        deductions_array = deductions_array.map{|deduc| deduc.split("__")[2]}
+        payload = build_mget_payload(deductions_array)
+        response = get_conn.post('post',payload.to_json)
+        deductions = JSON.parse(response.body)["docs"]
+      end
+      this_company_hash["customDeductions"] = deductions
+
       # byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
 
 
@@ -161,7 +172,7 @@ class Scraper
         next if response[0]["hits"]["hits"].empty?
         response.each do |resp|
           resp["hits"]["hits"].each do |request|
-            response_array.append(request) if request["_type"] = "custom.leave_request"
+            response_array.append(request) if request["_type"] == "custom.leave_request" || request["_source"]["_type"] == "custom.leave_request"
           end
         end
       end
@@ -176,10 +187,10 @@ class Scraper
       next if response[0]["hits"]["hits"].empty?
       response.each do |resp|
         resp["hits"]["hits"].each do |request|
-          response_array.append(request) if request["_type"] = "custom.leave_request"
+          policies_array.append(request) if request["_type"] = "custom.leave_request"
         end
       end
-      this_company_hash["leavePolicies"] = response_array
+      this_company_hash["leavePolicies"] = policies_array
       
 
       #now get payruns
@@ -209,8 +220,8 @@ class Scraper
       custom_items_array = []
       unless custom_items.nil?
         #get custom items
-        payload = build_custom_item_payload(ids)
-        get_conn = Faraday.new(url: 'https://app.hellohr.co.za/elasticsearch/mget', headers: extra_headers)
+        custom_items = custom_items.map {|item| item.split("__")[2]}
+        payload = build_mget_payload(custom_items)
         response = get_conn.post('post',payload.to_json)
         custom_items_array = JSON.parse(response.body)["docs"]
       end
@@ -231,7 +242,7 @@ class Scraper
 
 
 
-    zipfile_name = "#{folder}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H:%M:%S'}.zip"
+    zipfile_name = "#{folder}/hello-hr-dump #{Time.now.strftime '%Y-%m-%d %H-%M-%S'}.zip"
     Zip::File.open(zipfile_name, create: true) do |zipfile|
       input_filenames.each do |filename|
         # Two arguments:
@@ -271,6 +282,16 @@ class Scraper
     # now need to get employees and payroll
   end
 
+  def get_aggregate_term_employees(headers,id)
+    payload = build_aggregate_payload(scope = "dismissed",id = id)
+    agg_conn = Faraday.new(
+      url: "https://app.hellohr.co.za/elasticsearch/maggregate",
+      headers: headers
+    )
+    response = agg_conn.post('post',payload.to_json, headers)
+    JSON.parse(response.body)["responses"][0]['count']
+    # now need to get employees and payroll
+  end
 
   def create_main_conn(headers)
     main_conn = Faraday.new(
@@ -414,6 +435,39 @@ class Scraper
         puts "building employee maggregate payload failed"
       end
     when "payslips"
+    when "dismissed"
+      hash = {
+        "appname": "employee-listing",
+        "app_version": "live",
+        "aggregates": [
+        {
+          "appname": "employee-listing",
+          "app_version": "live",
+          "type": "custom.dismissal",
+          "constraints": [
+          {
+            "key": "company_custom_company",
+            "value": "1348695171700984260__LOOKUP__1663328287094x260654907396456450",
+            "constraint_type": "equals"
+          }],
+          "aggregate":
+          {
+            "fns": [
+            {
+              "n": "count"
+            }]
+          },
+          "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSHb.%el.cmSZS.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSHb.%el.cmSZS\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+        }]
+      }
+
+      if hash[:aggregates][0][:constraints][0][:key] == "company_custom_company"
+        # value takes the format of "{{user_id}}__LOOKUP__{{company_id}} e.g"1348695171700984260__LOOKUP__1664272257316x854080539290239000"
+        user_id = user.split("__")[0]
+        hash[:aggregates][0][:constraints][0][:value] = "#{user_id}__LOOKUP__#{id}"
+      else
+        puts "building terminated employee maggregate payload failed"
+      end
     else
       puts "provide scope"
     end
@@ -708,7 +762,7 @@ class Scraper
     encrypt_payload('employee-listing',hash)
   end
 
-  def build_custom_item_payload(ids)
+  def build_mget_payload(ids)
     hash = {
       "appname": "employee-listing",
       "app_version": "live",
@@ -719,6 +773,44 @@ class Scraper
  
      encrypt_payload('employee-listing',hash)
    end
+
+
+  def build_dismissed_payload(id,employee_count)
+    hash = {
+      "appname": "employee-listing",
+      "app_version": "live",
+      "searches": [
+      {
+        "appname": "employee-listing",
+        "app_version": "live",
+        "type": "custom.dismissal",
+        "constraints": [
+        {
+          "key": "company_custom_company",
+          "value": "1348695171700984260__LOOKUP__1663328287094x260654907396456450",
+          "constraint_type": "equals"
+        }],
+        "sorts_list": [],
+        "from": 0,
+        "n": 1,
+        "search_path": "{\"constructor_name\":\"DataSource\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSHb.%el.cmSZS.%p.%ds\"},{\"type\":\"node\",\"value\":{\"constructor_name\":\"Element\",\"args\":[{\"type\":\"json\",\"value\":\"%p3.bTMnU.%el.bTJkq.%el.bTKrX1.%el.cmSHb.%el.cmSZS\"}]}},{\"type\":\"raw\",\"value\":\"Search\"}]}"
+      }]
+    }
+    account = @@data_hash["config_data"][:account_id]
+    user = @@data_hash["config_data"][:user_id]
+    user_id = user.split("__")[0]
+    if hash[:searches][0][:constraints][0][:key] == "company_custom_company"
+      # value takes the format of "{{user_id}}__LOOKUP__{{company_id}} e.g"1348695171700984260__LOOKUP__1664272257316x854080539290239000"
+      hash[:searches][0][:constraints][0][:value] = "#{user_id}__LOOKUP__#{id}"
+      hash[:searches][0]["n"] = employee_count
+    else
+      puts "building employee payload failed"
+      byebug
+    end
+    encrypt_payload('employee-listing',hash)
+
+  end
+
   def decrypt_payload(context, x, y, z)
     decrypt = ->(e, t, r, data) {
       cipher = OpenSSL::Cipher.new('AES-256-CBC')
