@@ -1,9 +1,9 @@
 require 'faraday'
 require 'faraday/retry'
-require 'byebug'
 require 'securerandom'
 require 'rubygems'
 require 'zip'
+require 'pry-byebug'
 
 # get cookie txt file from user
 # convert to hash which can be used in faraday
@@ -72,6 +72,7 @@ class Scraper
     @@data_hash["config_data"] = {:account_id => account_id,:user_id => user_id}
     # now build the payload and get the company information
     company_count = get_aggregate_companies(extra_headers)
+    #binding.pry
     @@data_hash["config_data"][:company_count] =  company_count
     main_conn = create_main_conn(extra_headers)
     get_conn = Faraday.new(url: 'https://app.hellohr.co.za/elasticsearch/mget', headers: extra_headers)
@@ -81,10 +82,13 @@ class Scraper
     #sample_employee_payload is for The Good Sauce
 
     #for each company, get the ID, get employee data (magg + msearch) and payroll data (magg + msearch) 
+    count = 0
     for i in 0..(@@data_hash["config_data"][:company_count]-1)
       leave_approver_array = []
       this_company_hash = @@data_hash["company_data"][i]
-      byebug if this_company_hash["company_info"].nil?
+      binding.pry if this_company_hash["company_info"].nil?
+      # next unless this_company_hash["company_name"] == "Alex Jordaan Constructon CC"
+      # binding.pry
       id = this_company_hash["company_info"]["_id"]
       employees_count = get_aggregate_employees(extra_headers, id)
       terminated_employees_count = get_aggregate_term_employees(extra_headers, id)
@@ -121,7 +125,7 @@ class Scraper
       deductions_array = []
       employees.each do |emp|
         employee_hash = {"employeeInfo" => {},"payrollData" => []}
-        byebug if emp.nil? or emp["_source"].nil?
+        binding.pry if emp.nil? or emp["_source"].nil?
         payslips = emp["_source"]["payslips_list_custom_payslips"]
         payslip_count += payslips.size unless payslips.nil?
         unless payslips.nil?
@@ -141,9 +145,10 @@ class Scraper
         employee_hash["employeeInfo"] = emp["_source"]
         this_company_hash[:employees].append(employee_hash)
         leave_approver_array.append(employee_hash["employeeInfo"]["leave_approver_user"]) if !employee_hash["employeeInfo"]["leave_approver_user"].nil?
+        
       end
       
-
+      count = i
       #now get custom deductions
       deductions_array = deductions_array.compact.compact.flatten
       deductions = []
@@ -153,7 +158,7 @@ class Scraper
       end
       this_company_hash["customDeductions"] = deductions
 
-      # byebug if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
+      # binding.pry if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
 
 
       # now get paycycle info
@@ -184,14 +189,15 @@ class Scraper
       response = main_conn.post('post',payload.to_json)
       response = JSON.parse(response.body)["responses"]  
       
-      next if response[0]["hits"]["hits"].empty?
-      response.each do |resp|
-        resp["hits"]["hits"].each do |request|
-          policies_array.append(request) if request["_type"] = "custom.leave_request"
+      unless response[0]["hits"]["hits"].empty?
+        response.each do |resp|
+          resp["hits"]["hits"].each do |request|
+            policies_array.append(request) if request["_type"] = "custom.leave_request"
+          end
         end
       end
       this_company_hash["leavePolicies"] = policies_array
-      
+      binding.pry if this_company_hash["company_name"] == "Alex Jordaan Constructon CC"
 
       #now get payruns
       search_conn = Faraday.new(
@@ -208,7 +214,7 @@ class Scraper
 
         response.each do |resp|
           next if resp.empty?
-          byebug if resp.kind_of?(Array)
+          binding.pry if resp.kind_of?(Array)
           payrun_array.append(resp) if resp["_type"] == "custom.payroll"
         end
       end
@@ -234,7 +240,7 @@ class Scraper
       file = "#{folder}/#{filename}"
       File.write(file,JSON.pretty_generate(this_company_hash))
       input_filenames.append(filename)
-
+      binding.pry if this_company_hash["company_name"] == "Alex Jordaan Constructon CC"
       puts "scraped #{this_company_hash["company_name"]} with #{employees.size} employees, #{payslip_count} payslips"
     end
 
@@ -251,7 +257,7 @@ class Scraper
         #File.delete(File.join(folder, filename)) # issues with deletion here for some reason
       end
     end
-    # byebug
+    binding.pry if input_filenames.size != company_data.size
     input_filenames.each do |filename|
       File.delete(File.join(folder, filename))
     end
@@ -613,7 +619,7 @@ class Scraper
       hash[:searches][0]["n"] = employees_count
     else
       puts "building employee payload failed"
-      byebug
+      binding.pry
     end
     encrypt_payload('employee-listing',hash)
   end
@@ -650,7 +656,7 @@ class Scraper
       this_search[:constraints][0]["value"] = paycycle
       # puts this_search
       search_array.append(this_search)
-      # byebug if paycycle_array == ["1348695171700984260__LOOKUP__1663329641249x798169525388523500", "1348695171700984260__LOOKUP__1664995202603x316071105354268700"]
+      # binding.pry if paycycle_array == ["1348695171700984260__LOOKUP__1663329641249x798169525388523500", "1348695171700984260__LOOKUP__1664995202603x316071105354268700"]
     end
     
     hash[:searches] = search_array
@@ -698,7 +704,7 @@ class Scraper
 
     else
       puts "building employee payload failed"
-      byebug
+      binding.pry
     end
     encrypt_payload('employee-listing',hash)
   end
@@ -727,7 +733,7 @@ class Scraper
       hash["searches"][0]["constraints"][0]["value"] = "#{user_id}__LOOKUP__#{id}"
     else
       puts "building employee payload failed"
-      byebug
+      binding.pry
     end
     encrypt_payload('employee-listing',hash)
   end
@@ -815,7 +821,7 @@ class Scraper
       hash[:searches][0]["n"] = employee_count
     else
       puts "building employee payload failed"
-      byebug
+      binding.pry
     end
     encrypt_payload('employee-listing',hash)
 
