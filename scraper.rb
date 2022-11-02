@@ -87,8 +87,8 @@ class Scraper
       leave_approver_array = []
       this_company_hash = @@data_hash["company_data"][i]
       binding.pry if this_company_hash["company_info"].nil?
-      # next unless this_company_hash["company_name"] == "Alex Jordaan Constructon CC"
-      # binding.pry
+      #next unless this_company_hash["company_name"] == "Sportiv Clothing CC"
+      #binding.pry
       id = this_company_hash["company_info"]["_id"]
       employees_count = get_aggregate_employees(extra_headers, id)
       terminated_employees_count = get_aggregate_term_employees(extra_headers, id)
@@ -119,10 +119,11 @@ class Scraper
       #now get payslips
       # can't find the maggregate search to get payslips number but we can use the employee data to
       # get the total payslips in company. 
-
+      # binding.pry if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
       payslip_count = 0
       payslips = {}
       deductions_array = []
+      cus_items_array = []
       employees.each do |emp|
         employee_hash = {"employeeInfo" => {},"payrollData" => []}
         binding.pry if emp.nil? or emp["_source"].nil?
@@ -141,6 +142,23 @@ class Scraper
             end
           end
           deductions_array = deductions_array + deductions.compact unless deductions.nil?
+
+          cus_items = employee_hash["payrollData"].map do |payslip| 
+            unless payslip.nil? || payslip["_source"].nil? ||payslip["_source"]["add_income_list_custom_add_income"].nil?
+              payslip["_source"]["add_income_list_custom_add_income"].flatten
+            else
+              nil
+            end
+          end
+          other_cus_items = employee_hash["payrollData"].map do |payslip| 
+            unless payslip.nil? || payslip["_source"].nil? ||payslip["_source"]["custom_incomes_list_custom_custom_income"].nil?
+              payslip["_source"]["custom_incomes_list_custom_custom_income"].flatten
+            else
+              nil
+            end
+          end
+          # binding.pry if emp["_source"]["last_name_text"] == "Cloete"
+          cus_items_array = cus_items_array + cus_items.compact + other_cus_items.compact unless cus_items.nil?
         end
         employee_hash["employeeInfo"] = emp["_source"]
         this_company_hash[:employees].append(employee_hash)
@@ -157,8 +175,19 @@ class Scraper
         deductions = do_mget_request(deductions_array,get_conn)
       end
       this_company_hash["customDeductions"] = deductions
+      
+      #binding.pry if this_company_hash["company_name"] == "The Good Sauce"
+      
+      cus_items_array = cus_items_array.compact.compact.flatten
+      cus_items = []
+      unless cus_items_array.empty?
+        cus_items_array = cus_items_array.map{|deduc| deduc.split("__")[2]}
+        cus_items = do_mget_request(cus_items_array,get_conn)
+      end
+      #binding.pry
+      this_company_hash["customItems"] = cus_items
 
-      # binding.pry if this_company_hash["company_name"] == "Dunder Mifflin (Demo organisation)"
+      # binding.pry if this_company_hash["company_name"] == "The Good Sauce"
 
 
       # now get paycycle info
@@ -197,7 +226,7 @@ class Scraper
         end
       end
       this_company_hash["leavePolicies"] = policies_array
-      binding.pry if this_company_hash["company_name"] == "Alex Jordaan Constructon CC"
+      #binding.pry if this_company_hash["company_name"] == "Alex Jordaan Constructon CC"
 
       #now get payruns
       search_conn = Faraday.new(
@@ -228,14 +257,14 @@ class Scraper
         custom_items = custom_items.map {|item| item.split("__")[2]}
         custom_items_array = do_mget_request(custom_items,get_conn)
       end
-      this_company_hash["customItems"] = custom_items_array
+      this_company_hash["customItemData"] = custom_items_array
 
 
       #add to main hash
       @@data_hash["company_data"][i] = this_company_hash
 
       # create json file
-      filename = "#{this_company_hash["company_name"]}.json"
+      filename = "#{this_company_hash["company_name"].gsub("/","")}.json"
       filename = "#{i}-" + filename
       file = "#{folder}/#{filename}"
       File.write(file,JSON.pretty_generate(this_company_hash))
