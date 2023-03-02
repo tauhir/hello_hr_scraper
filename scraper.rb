@@ -87,7 +87,7 @@ class Scraper
       leave_approver_array = []
       this_company_hash = @@data_hash["company_data"][i]
       binding.pry if this_company_hash["company_info"].nil?
-      #next unless this_company_hash["company_name"] == "Sportiv Clothing CC"
+      #next unless this_company_hash["company_name"] == "Awesome Snacks (Pty) Ltd"
       #binding.pry
       id = this_company_hash["company_info"]["_id"]
       employees_count = get_aggregate_employees(extra_headers, id)
@@ -171,11 +171,13 @@ class Scraper
       deductions_array = deductions_array.compact.compact.flatten
       deductions = []
       unless deductions_array.empty?
-        deductions_array = deductions_array.map{|deduc| deduc.split("__")[2]}
+        deductions_array = deductions_array.map{|deduc| 
+        binding.pry if deduc.nil? 
+        deduc.split("__")[2]}
         deductions = do_mget_request(deductions_array,get_conn)
       end
       this_company_hash["customDeductions"] = deductions
-      
+      #binding.pry
       #binding.pry if this_company_hash["company_name"] == "The Good Sauce"
       
       cus_items_array = cus_items_array.compact.compact.flatten
